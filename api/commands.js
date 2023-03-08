@@ -1,5 +1,6 @@
 import { getAnswer } from "../utils/openai";
-import { reply } from "../utils/tlg";
+import { reply } from "../utils/telegram";
+import { handleStartSurvey } from "./survey";
 
 export const actions = [
   { command: "/start", description: "Start saving now 📖", func: onStart },
@@ -112,7 +113,7 @@ export function onHoroscope(ctx, param) {
 
 export async function onStart(ctx, param) {
   console.log("onStart");
-  return await reply(ctx, "Welcome to GPT-3 Bot!!!");
+  return await handleStartSurvey(ctx);
 }
 
 export async function onCommand(ctx, command, param) {
