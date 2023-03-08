@@ -49,11 +49,12 @@ export async function onTell(ctx, param) {
       "tell me something interesting about that happened on this date in history starting with Did you know..."
     );
     return reply(
+      ctx,
       `Please ask a param with at least 3 characters.  \n\n BTW  ${gpt}`
     );
   } else {
     const answer = await getAnswer("tell me " + param);
-    return reply(answer);
+    return reply(ctx, answer);
   }
 }
 
@@ -63,7 +64,7 @@ export function onPoem(ctx, param) {
     "Roses are red, violets are blue, here's a beautiful poem just for you!" +
     param;
   // reply with the poem
-  return reply(poem);
+  reply(ctx, poem);
 }
 
 export function onJoke(ctx, param) {
@@ -71,14 +72,14 @@ export function onJoke(ctx, param) {
   const joke =
     "Why don't scientists trust atoms? Because they make up everything!";
   // reply with the joke
-  return reply(joke);
+  reply(ctx, joke);
 }
 
 export function onFact(ctx, param) {
   // logic to fetch a fact
   const fact = "A group of flamingos is called a flamboyance.";
   // reply with the fact
-  return reply(fact);
+  return reply(ctx, fact);
 }
 
 export function onQuote(ctx, param) {
@@ -86,14 +87,14 @@ export function onQuote(ctx, param) {
   const quote =
     "The best way to predict your future is to create it. - Abraham Lincoln";
   // reply with the quote
-  return reply(quote);
+  return reply(ctx, quote);
 }
 
 export function onNews(ctx, param) {
   // logic to fetch the latest news
   const news = "Here are the latest headlines: ...";
   // reply with the news
-  return reply(news);
+  return reply(ctx, news);
 }
 
 export function onWeather(ctx, param) {
@@ -101,14 +102,14 @@ export function onWeather(ctx, param) {
   const weather =
     "The weather today is sunny with a high of 25 degrees Celsius.";
   // reply with the weather forecast
-  return reply(weather);
+  return reply(ctx, weather);
 }
 
 export function onHoroscope(ctx, param) {
   // logic to fetch the user's horoscope based on their date of birth or zodiac sign
   const horoscope = "Here's your horoscope for today: ...";
   // reply with the horoscope
-  return reply(horoscope);
+  return reply(ctx, horoscope);
 }
 
 export async function onStart(ctx, param) {
@@ -117,11 +118,11 @@ export async function onStart(ctx, param) {
 }
 
 export async function onCommand(ctx, command, param) {
-  console.log("on the command", command);
+  console.log("on the command", ctx, command);
   const chosenAction = actions.find((action) => action.command === command);
   if (chosenAction && chosenAction.func) {
     console.log("found the action", chosenAction);
     return chosenAction.func(ctx, param);
   }
-  return reply("Sorry, I don't understand that command.");
+  return reply(ctx, "Sorry, I don't understand that command.");
 }

@@ -16,19 +16,16 @@ module.exports = async (request, response) => {
     console.log(ctx);
     if (ctx.entities) {
       if (ctx.entities[0]?.type === "bot_command")
-        return await onCommand(
-          ctx,
-          ctx.text,
-          ctx.text.slice(ctx.entities[0].length)
-        );
+        console.log("------------ call onCommand------------");
+      await onCommand(ctx, ctx.text, ctx.text.slice(ctx.entities[0].length));
+      return response.send("OK");
     }
+
+    console.log("not a command, handle it");
+    return response.send("OK");
   } catch (error) {
     console.error("Error sending message");
     console.log(error.toString());
   }
-  response.json({
-    body: request.body,
-    query: request.query,
-    cookies: request.cookies,
-  });
+  return response.send("OK");
 };
