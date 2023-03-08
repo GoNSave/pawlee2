@@ -4,7 +4,7 @@ import { onCommand } from "./commands";
 module.exports = async (request, response) => {
   try {
     if (!request?.body?.message?.text) {
-      response.json({
+      return response.json({
         body: request.body,
         query: request.query,
         cookies: request.cookies,
@@ -25,6 +25,9 @@ module.exports = async (request, response) => {
     return response.send("OK");
   } catch (error) {
     console.error("Error sending message");
+    console.log("------ req begin-----------------------------------");
+    console.log(request);
+    console.log("------ req end-----------------------------------");
     console.log(error.toString());
   }
   return response.send("OK");
