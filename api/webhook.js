@@ -1,6 +1,6 @@
 process.env.NTBA_FIX_319 = "test";
 import { onCommand } from "./commands";
-import { getUser } from "../utils/firebase";
+import { getUser, updateUser } from "../utils/firebase";
 import { surveyResponse } from "./survey";
 
 module.exports = async (request, response) => {
@@ -19,15 +19,19 @@ module.exports = async (request, response) => {
       telegramId: ctx.from.id,
     });
 
-    // console.log(ctx);
+    console.log(ctx);
 
-    if (ctx.user?.state === "survey") {
+    if (ctx.user?.lastCommand === "/start") {
       await surveyResponse(ctx);
       return response.send("OK");
     }
     console.log("----- after survey------------------------");
     if (ctx.entities) {
       if (ctx.entities[0]?.type === "bot_command") {
+        updateUser({
+          telegramId: ctx.from.id,
+          lastCommand: ctx.text,
+        });
         console.log("handle command: " + ctx.entities[0]);
         await onCommand(
           ctx,

@@ -64,8 +64,8 @@ const showMainMenu = async (ctx, text) => {
     //   reply_to_message_id: ctx.message_id,
     reply_markup: {
       force_reply: true,
-      resize_keyboard: false,
-      one_time_keyboard: true,
+      resize_keyboard: true,
+      one_time_keyboard: false,
       inline_keyboard: [
         [
           {
@@ -97,14 +97,19 @@ const showMainMenu = async (ctx, text) => {
     },
   };
 
-  // const ret = await bot.sendMessage(
-  //   ctx.chat.id,
-  //   `Hi ${ctx.from.first_name}! \n How Can I help you? `,
-  //   keyboard
-  // );
+  const ret = await bot.sendMessage(
+    ctx.chat.id,
+    `Hi ${ctx.from.first_name}! \n ${text} Please chose one of the following to continue? \n\n`,
+    keyboard
+  );
 };
 
-const handleQuestion = async (ctx, question, msg = "") => {
+const handleQuestion = async (
+  ctx,
+  question,
+  msg = "",
+  show_keyboard = false
+) => {
   console.log("handleQuestion------", question);
 
   let { question: text, answers } = question;
@@ -112,15 +117,43 @@ const handleQuestion = async (ctx, question, msg = "") => {
   //   reply_to_message_id: ctx.message_id,
   return await bot.sendMessage(ctx.chat.id, text, {
     reply_markup: {
-      force_reply: true,
-      resize_keyboard: false,
-      one_time_keyboard: true,
+      // force_reply: true,
+      resize_keyboard: true,
+      one_time_keyboard: show_keyboard,
       keyboard: answers,
     },
   });
 };
 
 export async function surveyResponse(ctx) {
+  let qIndex = ctx.user.questionIndex ? ctx.user.questionIndex : 0;
+
+  console.log("surveyResponse------", qIndex);
+
+  if (qIndex < questions.length) {
+    await updateUser({
+      telegramId: ctx.from.id,
+      questionIndex: qIndex + 1,
+    });
+    return handleQuestion(
+      ctx,
+      questions[qIndex],
+      "",
+      qIndex >= questions.length - 1
+    );
+  }
+  await updateUser({
+    telegramId: ctx.from.id,
+    lastCommand: "none",
+  });
+
+  return showMainMenu(
+    ctx,
+    "\n\n 🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝 \n\n"
+  );
+}
+
+export async function surveyResponse1(ctx) {
   const qIndex = ctx.user.questionIndex ? ctx.user.questionIndex : 0;
   console.log("surveyResponse------", qIndex);
 
@@ -168,17 +201,12 @@ export async function surveyResponse(ctx) {
       }
     }
   }
-
-  // if (!answerFound && !ctx.user.welcomed) {
-  //   return handleQuestion(
-  //     ctx,
-  //     questions[qIndex],
-  //     `Please choose one of the options below`
-  //   );
-  // }
 }
 
 export async function handleStartSurvey(ctx) {
+  if (ctx.user.questionIndex >= questions.length) {
+    return showMainMenu(ctx, "\n You already finished the survey \n\n");
+  }
   console.log("start the survey ", ctx.from.id);
   const userData = {
     telegramId: ctx.from.id,
@@ -186,7 +214,6 @@ export async function handleStartSurvey(ctx) {
     last_name: ctx.from.last_name,
     language_code: ctx.from.language_code,
     questionIndex: 0,
-    state: "survey",
   };
 
   const user = await updateUser(userData);
@@ -197,8 +224,8 @@ export async function handleStartSurvey(ctx) {
     {
       reply_markup: {
         force_reply: true,
-        resize_keyboard: false,
-        one_time_keyboard: true,
+        resize_keyboard: true,
+        one_time_keyboard: false,
         keyboard: [[{ text: "🏁 " }, { text: "Let's Got " }, { text: "🏁 " }]],
       },
     }
