@@ -1,9 +1,16 @@
 process.env.NTBA_FIX_319 = "test";
 import { onCommand } from "./commands";
+import { onCallback } from "./callback";
 import { getUser, updateUser } from "../utils/firebase";
 import { surveyResponse } from "./survey";
 
 module.exports = async (request, response) => {
+  if (request.body.callback_query) {
+    console.log("callback_query", request.body.callback_query);
+    await onCallback(request.body.callback_query);
+    return response.send("OK");
+  }
+
   try {
     if (!request?.body?.message?.text) {
       return response.json({

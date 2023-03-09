@@ -63,9 +63,6 @@ const showMainMenu = async (ctx, text) => {
   const keyboard = {
     //   reply_to_message_id: ctx.message_id,
     reply_markup: {
-      force_reply: true,
-      resize_keyboard: true,
-      one_time_keyboard: false,
       inline_keyboard: [
         [
           {
