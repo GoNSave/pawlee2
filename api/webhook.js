@@ -1,6 +1,6 @@
 process.env.NTBA_FIX_319 = "test";
 import { onCommand } from "./commands";
-import { onCallback } from "./callback";
+import { onAction } from "./actions";
 import { getUser, updateUser } from "../utils/firebase";
 import { surveyResponse } from "./survey";
 

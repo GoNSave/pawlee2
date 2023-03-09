@@ -67,27 +67,27 @@ const showMainMenu = async (ctx, text) => {
         [
           {
             text: "🗣 Talk with PawLee",
-            callback_data: "1 mainmenu:ans1",
+            callback_data: "handleTalkToPawlee1",
           },
           {
             text: "💸 Income Tracker",
-            callback_data: "1 mainmenu:ans2",
+            callback_data: "handleIncomeTracker1",
           },
         ],
         [
           {
             text: "📣 Incentives",
-            callback_data: "1 mainmenu:ans4",
+            callback_data: "handleIncentives",
           },
           {
             text: "📣 Announcements",
-            callback_data: "1 mainmenu:ans5",
+            callback_data: "handleAnnouncements",
           },
         ],
         [
           {
             text: "💰 Extra Earnings",
-            callback_data: "1 mainmenu:ans3",
+            callback_data: "handleExtraEarnings",
           },
         ],
       ],

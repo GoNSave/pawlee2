@@ -2,7 +2,7 @@ import { getAnswer } from "../utils/openai";
 import { reply } from "../utils/telegram";
 import { handleStartSurvey } from "./survey";
 
-export const actions = [
+export const commands = [
   { command: "/start", description: "Start saving now 📖", func: onStart },
   { command: "/tell", description: "Get a bedtime story 📖", func: onTell },
   {
@@ -118,7 +118,7 @@ export async function onStart(ctx, param) {
 }
 
 export async function onCommand(ctx, command, param) {
-  const chosenAction = actions.find((action) => action.command === command);
+  const chosenAction = commands.find((action) => action.command === command);
   if (chosenAction && chosenAction.func) {
     return chosenAction.func(ctx, param);
   }
