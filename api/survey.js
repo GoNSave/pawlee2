@@ -11,50 +11,55 @@ import {
 export const questions = [
   {
     question: "What is your gender? 🚹 🚺",
-    options: [[{ text: "Man" }, { text: "Woman" }, { text: "Others" }]],
+    answers: [
+      [{ text: "👨 Man" }, { text: "👩 Woman" }, { text: "🧑 Others" }],
+    ],
+    key: "gender",
   },
   {
     question: "How old are you? 🎁 🎂 🎈",
-    options: [
+    answers: [
       [{ text: "18-25 🎓" }, { text: "25-35 👨‍💼" }, { text: "35-45 🧑‍💼" }],
       [{ text: "45-55 👴" }, { text: "55-65 🧓" }, { text: "65+ 🧑‍🦳" }],
     ],
+    key: "age",
   },
   {
     question: "Chose the delivery company you work for the most: 🏍️ 🚴 🚗 ",
-    options: [
+    answers: [
       [{ text: "🛵 Grab" }, { text: "🍽️ FoodPanda" }, { text: "🍕 Deliveroo" }],
     ],
+    key: "company",
   },
   {
     question: " What vehicle you ride? 🚲 🛵 🚗",
-    options: [
+    answers: [
       [{ text: "🏍️ Motorcycle" }, { text: "🚴 Cycle" }],
       [{ text: "🚗 Car" }, { text: "🚲 E-bike" }, { text: "🚶 Walk" }],
     ],
+    key: "vehicle",
   },
   {
     question: "What's your preferred zone in SG to work in? 📍 ",
-    options: [
+    answers: [
       [{ text: "👉 SG North" }, { text: "👈 SG South" }],
       [{ text: "👆 SG East" }, { text: "👇 SG West" }],
     ],
+    key: "zone",
   },
   {
     question:
       " How did you buy your mobility device? (Choose ‘Not applicable’ if you don’t use a vehicle) 🛴 🚲 🚗",
-    options: [
+    answers: [
       [{ text: "🏦 Bank Loan" }, { text: "💰 Savings" }],
       [{ text: "🤝 Borrowed from friends" }],
       [{ text: "🚫 Not applicable" }],
     ],
+    kye: "purchase",
   },
 ];
 
 const showMainMenu = async (ctx, text) => {
-  const { name } = ctx.from.first_name;
-  let { caption, options } = menu;
-
   const keyboard = {
     //   reply_to_message_id: ctx.message_id,
     reply_markup: {
@@ -92,67 +97,85 @@ const showMainMenu = async (ctx, text) => {
     },
   };
 
-  const ret = await bot.sendMessage(
-    ctx.chat.id,
-    `Hi ${ctx.from.first_name}! \n How Can I help you? `,
-    keyboard
-  );
+  // const ret = await bot.sendMessage(
+  //   ctx.chat.id,
+  //   `Hi ${ctx.from.first_name}! \n How Can I help you? `,
+  //   keyboard
+  // );
 };
 
 const handleQuestion = async (ctx, question, msg = "") => {
-  console.log("handle question", question, msg);
-  let { question: text, options } = question;
+  console.log("handleQuestion------", question);
+
+  let { question: text, answers } = question;
   text = msg ? msg + "\n" + text : text;
-
-  return await bot.sendMessage(
-    ctx.chat.id,
-    `Hi ${ctx.from.first_name}! \n Ready to answer a few quick questions and earn $6 SGD of extra money?`,
-    {
-      reply_markup: {
-        force_reply: true,
-        resize_keyboard: false,
-        one_time_keyboard: true,
-        keyboard: [
-          [{ text: "🏁1 " }, { text: "Let's Got 2" }, { text: "🏁 3" }],
-        ],
-      },
-    }
-  );
-
+  //   reply_to_message_id: ctx.message_id,
   return await bot.sendMessage(ctx.chat.id, text, {
     reply_markup: {
       force_reply: true,
       resize_keyboard: false,
       one_time_keyboard: true,
-      keyboard: [[{ text: "Man " }, { text: "Woman" }, { text: "Others" }]],
+      keyboard: answers,
     },
   });
-
-  const keyboard = {
-    //   reply_to_message_id: ctx.message_id,
-    reply_markup: {
-      force_reply: true,
-      resize_keyboard: false,
-      one_time_keyboard: true,
-      keyboard: options.map((option) =>
-        option.map((o) => ({ text: o.text, callback_data: o.callback_data }))
-      ),
-    },
-  };
-
-  return await bot.sendMessage(ctx.chat.id, text, keyboard);
 };
 
 export async function surveyResponse(ctx) {
-  // console.log("survey response", ctx);
-  const qIndex = ctx.user.questionIndex ? ctx.user.questionIndex + 1 : 0;
-  if (qIndex >= questions.length - 1) {
-    const actionStrings = actions.map(
-      (action) => `${action.command} - ${action.description}`
-    );
-    return showMainMenu(ctx, "You have completed the survey. Thank you!");
+  const qIndex = ctx.user.questionIndex ? ctx.user.questionIndex : 0;
+  console.log("surveyResponse------", qIndex);
+
+  if (qIndex === 0) {
+    await updateUser({ telegramId: ctx.from.id, questionIndex: qIndex + 1 });
+    return handleQuestion(ctx, questions[qIndex + 1]);
   }
-  return handleQuestion(ctx, questions[qIndex]);
+
+  if (qIndex >= questions.length) {
+    if (!ctx.user.welcomed) {
+      console.log("user not welcomed yet");
+      try {
+        await updateUser({
+          telegramId: ctx.message.from.id,
+          welcomed: true,
+        });
+      } catch (err) {
+        console.log("Update user error", err);
+      }
+      await reply(
+        "🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝"
+      );
+      return showMainMenu(ctx);
+    }
+  }
+
+  for (const answer of questions[qIndex].answers.flat()) {
+    if (answer.text.includes(ctx.text)) {
+      try {
+        await updateUser({
+          telegramId: ctx.from.id,
+          questionIndex: qIndex + 1,
+          [questions[qIndex].key]: ctx.text,
+        });
+      } catch (err) {
+        console.log("Update user error", err);
+      }
+      if (qIndex + 1 < questions.length) {
+        return handleQuestion(ctx, questions[qIndex + 1]);
+      } else {
+        await reply(
+          "🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝"
+        );
+        return showMainMenu(ctx);
+      }
+    }
+  }
+
+  // if (!answerFound && !ctx.user.welcomed) {
+  //   return handleQuestion(
+  //     ctx,
+  //     questions[qIndex],
+  //     `Please choose one of the options below`
+  //   );
+  // }
 }
 
 export async function handleStartSurvey(ctx) {

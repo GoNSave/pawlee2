@@ -2,6 +2,7 @@ process.env.NTBA_FIX_319 = "test";
 import { onCommand } from "./commands";
 import { getUser } from "../utils/firebase";
 import { surveyResponse } from "./survey";
+
 module.exports = async (request, response) => {
   try {
     if (!request?.body?.message?.text) {
@@ -18,14 +19,22 @@ module.exports = async (request, response) => {
       telegramId: ctx.from.id,
     });
 
+    // console.log(ctx);
+
     if (ctx.user?.state === "survey") {
-      surveyResponse(ctx);
+      await surveyResponse(ctx);
       return response.send("OK");
     }
-    console.log(ctx);
+    console.log("----- after survey------------------------");
     if (ctx.entities) {
-      if (ctx.entities[0]?.type === "bot_command")
-        await onCommand(ctx, ctx.text, ctx.text.slice(ctx.entities[0].length));
+      if (ctx.entities[0]?.type === "bot_command") {
+        console.log("handle command: " + ctx.entities[0]);
+        await onCommand(
+          ctx,
+          ctx.text,
+          ctx.text.slice(ctx.entities[0].length).toLowerCase()
+        );
+      }
       return response.send("OK");
     }
     console.log("not a command, handle it");
