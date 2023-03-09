@@ -7,7 +7,7 @@ import { surveyResponse } from "./survey";
 module.exports = async (request, response) => {
   if (request.body.callback_query) {
     console.log("callback_query", request.body.callback_query);
-    await onCallback(request.body.callback_query);
+    await onAction(request.body.callback_query);
     return response.send("OK");
   }
 

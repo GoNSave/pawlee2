@@ -23,10 +23,10 @@ import { replyWithId } from "../utils/telegram";
 //   return replyWithId(ctx.from.id, "Talk to pawlee now");
 // }
 
-export const actions = [
-  { command: "/start", description: "Start saving now 📖", func: onStart },
-  { command: "/tell", description: "Get a bedtime story 📖", func: onTell },
-];
+// export const actions = [
+//   { command: "/start", description: "Start saving now 📖", func: onStart },
+//   { command: "/tell", description: "Get a bedtime story 📖", func: onTell },
+// ];
 
 export async function onAction(ctx) {
   //   console.log(callbacks);
@@ -35,5 +35,5 @@ export async function onAction(ctx) {
   //   if (exeCallback && exeCallback.function) {
   //     return exeCallback.func(ctx);
   //   }
-  return reply(ctx, "Sorry, I don't understand that command.");
+  return replyWithId(ctx.from.id, "Sorry, I don't understand that command.");
 }
