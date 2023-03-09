@@ -118,10 +118,8 @@ export async function onStart(ctx, param) {
 }
 
 export async function onCommand(ctx, command, param) {
-  console.log("on the command", ctx, command);
   const chosenAction = actions.find((action) => action.command === command);
   if (chosenAction && chosenAction.func) {
-    console.log("found the action", chosenAction);
     return chosenAction.func(ctx, param);
   }
   return reply(ctx, "Sorry, I don't understand that command.");
