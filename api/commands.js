@@ -1,6 +1,7 @@
 import { getAnswer } from "../utils/openai";
 import { reply } from "../utils/telegram";
 import { handleStartSurvey } from "./survey";
+import { defaultResponse } from "../utils/constants";
 
 export const commands = [
   { command: "/start", description: "Start saving now 📖", func: onStart },
@@ -122,5 +123,5 @@ export async function onCommand(ctx, command, param) {
   if (execCommand && execCommand.func) {
     return execCommand.func(ctx, param);
   }
-  return reply(ctx, "Sorry, I don't understand that command.");
+  return defaultResponse(ctx, `Sorry, ${command} is not a valid command.`);
 }

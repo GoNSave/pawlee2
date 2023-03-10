@@ -10,9 +10,9 @@ export const reply = async (ctx, message) => {
 };
 
 export const replyWithId = async (telegramId, message) => {
-  console.log("replying", message);
+  // console.log("replying", message);
   const ret = await bot.sendMessage(telegramId, message);
-  console.log("replying ret", ret);
+  // console.log("replying ret", ret);
   return ret;
 };
 

@@ -8,6 +8,8 @@ import {
   getUser,
 } from "../utils/firebase";
 
+import { MainMenu } from "../utils/constants";
+
 export const questions = [
   {
     question: "What is your gender? 🚹 🚺",
@@ -60,44 +62,10 @@ export const questions = [
 ];
 
 const showMainMenu = async (ctx, text) => {
-  const keyboard = {
-    //   reply_to_message_id: ctx.message_id,
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "🗣 Talk with PawLee",
-            callback_data: "handleTalkToPawlee1",
-          },
-          {
-            text: "💸 Income Tracker",
-            callback_data: "handleIncomeTracker1",
-          },
-        ],
-        [
-          {
-            text: "📣 Incentives",
-            callback_data: "handleIncentives",
-          },
-          {
-            text: "📣 Announcements",
-            callback_data: "handleAnnouncements",
-          },
-        ],
-        [
-          {
-            text: "💰 Extra Earnings",
-            callback_data: "handleExtraEarnings",
-          },
-        ],
-      ],
-    },
-  };
-
   const ret = await bot.sendMessage(
     ctx.chat.id,
     `Hi ${ctx.from.first_name}! \n ${text} Please chose one of the following to continue? \n\n`,
-    keyboard
+    MainMenu
   );
 };
 
