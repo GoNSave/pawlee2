@@ -91,6 +91,12 @@ export const EditProfile = {
           callback_data: "handleEditProfile:City",
         },
       ],
+      [
+        {
+          text: "📋 Back to Main Menu ⬅️",
+          callback_data: "handleMainMenu:Company",
+        },
+      ],
     ],
   },
 };

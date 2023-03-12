@@ -74,7 +74,13 @@ export async function handleEditProfile(ctx, param) {
   return await bot.sendMessage(ctx.from.id, `Edit ${param}\n`);
 }
 
-export async function handleMainMenu(ctx, param) {}
+export async function handleMainMenu(ctx, param) {
+  return await bot.sendMessage(
+    ctx.from.id,
+    `\n Please chose one of the following to continue... `,
+    MainMenu
+  );
+}
 
 export async function answerResponse(ctx, param) {
   console.log("answerResponse ------", param);
@@ -130,6 +136,14 @@ export async function handleProfile(ctx, param) {
     ctx.from.id,
     `Chose the detail to edit\n`,
     EditProfile
+  );
+}
+
+export async function handleBackToMainMenu(ctx, param) {
+  return await bot.sendMessage(
+    ctx.chat.id,
+    `Hi ${ctx.from.first_name}! \n\n ${msg} \n\n Please chose one of the following to continue... \n\nThanks`,
+    MainMenu
   );
 }
 
