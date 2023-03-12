@@ -57,6 +57,39 @@ export const MainMenu = {
           text: "\n💰 Extra Earnings\n",
           callback_data: "handleExtraEarnings:Extra Earnings",
         },
+        {
+          text: "\n👤 Edit Profile\n",
+          callback_data: "handleProfile:Edit Profile",
+        },
+      ],
+    ],
+  },
+};
+
+export const EditProfile = {
+  //   reply_to_message_id: ctx.message_id,
+  reply_markup: {
+    resize_keyboard: false,
+    inline_keyboard: [
+      [
+        {
+          text: "🗣 Zone",
+          callback_data: "handleEditProfile:Zone",
+        },
+        {
+          text: "\n💸 Vehicle\n",
+          callback_data: "handleEditProfile:Vehicle",
+        },
+      ],
+      [
+        {
+          text: "\n💸 Company\n",
+          callback_data: "handleEditProfile:Company",
+        },
+        {
+          text: "\n📣 City\n",
+          callback_data: "handleEditProfile:City",
+        },
       ],
     ],
   },

@@ -3,7 +3,7 @@ import { reply, bot } from "../utils/telegram";
 import { getAnswer } from "../utils/openai";
 import { replyWithId } from "../utils/telegram";
 import { updateUser } from "../utils/firebase";
-import { AnswerResponse, MainMenu } from "../utils/constants";
+import { AnswerResponse, MainMenu, EditProfile } from "../utils/constants";
 
 export const actions = [
   {
@@ -20,6 +20,31 @@ export const actions = [
     action: "answerResponse",
     description: "Response to answer",
     func: answerResponse,
+  },
+  {
+    action: "handleAnnouncements",
+    description: "Send announcements",
+    func: handleAnnouncements,
+  },
+  {
+    action: "handleMainMenu",
+    description: "Go to main menu",
+    func: handleMainMenu,
+  },
+  {
+    action: "handleProfile",
+    description: "Edit profile",
+    func: handleProfile,
+  },
+  {
+    action: "handleExtraEarnings",
+    description: "Extra Earnings",
+    func: handleExtraEarnings,
+  },
+  {
+    action: "handleEditProfile",
+    description: "Edit Profile ",
+    func: handleEditProfile,
   },
 ];
 
@@ -45,6 +70,12 @@ const AnswerResponse = {
   },
 };
 
+export async function handleEditProfile(ctx, param) {
+  return await bot.sendMessage(ctx.from.id, `Edit ${param}\n`);
+}
+
+export async function handleMainMenu(ctx, param) {}
+
 export async function answerResponse(ctx, param) {
   console.log("answerResponse ------", param);
   await updateUser({
@@ -66,6 +97,55 @@ export async function replyFromPawlee(ctx, param) {
   const answer = await getAnswer(param);
   // const answer = "The answer is coming for " + param;
   return await bot.sendMessage(telegramId, answer, AnswerResponse);
+}
+
+export async function handleAnnouncements(ctx, param) {
+  const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
+  const announcement = `
+  
+  \n CW09 Mon - Fri  Motorbike/Cars/Ebike
+  
+   \nMon, 27 Feb, 12 am - Fri, 03 Mar 11:59 pm 
+   Make 45 orders 👉 receive +$21
+   Make 60 orders 👉 receive +$52
+   Make 80 orders 👉 receive +$85
+   Make 95 orders 👉 receive +$113
+   Make 115 orders 👉 receive +$144
+  
+  \n CW10 Mon - Fri  Motorbike/Cars/Ebike
+  
+   \nMon, 27 Feb, 12 am - Fri, 03 Mar 11:59 pm 
+   Make 45 orders 👉 receive +$21
+   Make 60 orders 👉 receive +$52
+   Make 80 orders 👉 receive +$85
+   Make 95 orders 👉 receive +$113
+   Make 115 orders 👉 receive +$144
+  \n *90% Acceptance Rate & 95% Actual vs Planned`;
+  return await bot.sendMessage(telegramId, announcement, AnswerResponse);
+}
+
+export async function handleProfile(ctx, param) {
+  console.log("handleProfile ------ is", param);
+  return await bot.sendMessage(
+    ctx.from.id,
+    `Chose the detail to edit\n`,
+    EditProfile
+  );
+}
+
+export async function handleExtraEarnings(ctx, param) {
+  console.log("handleExtraEarnings ------", ctx);
+  return replyWithId(
+    ctx.from.id,
+
+    `⚠️RULES OF THE WEEK⚠️
+
+We are JUST paying for:
+👉Payslips from 11:00 am to 2 pm and
+     5:00 pm to 8 pm
+👉Payslips from the 🔟 days before Today
+👉Grab and Deliveroo payslips`
+  );
 }
 
 export async function handleTalkToPawlee(ctx, param) {
@@ -115,14 +195,40 @@ export async function handleTalkToPawlee(ctx, param) {
 
 export async function onAction(ctx) {
   const actionData = ctx.data.split(":");
-  console.log(actionData);
+  console.log("--------------------------------");
+  console.log("in onAction", actionData, ctx);
+  console.log("--------------------------------");
   for (const action of actions) {
+    console.log("Find the action and call it", actionData[0], action.action);
     if (action.action === actionData[0]) {
       return await action.func(ctx, actionData[1]);
     }
   }
-  return replyWithId(
-    ctx.from.id,
-    `Sorry, I don't understand that command ${ctx.data}`
+
+  const mainMenuButton = {
+    reply_markup: {
+      resize_keyboard: false,
+      inline_keyboard: [
+        [
+          {
+            text: "📋 Back to Main Menu ⬅️",
+            callback_data: "handleBackToMainMenu:Talk with PawLee",
+          },
+        ],
+      ],
+    },
+  };
+  return await defaultResponse(
+    ctx,
+    "Sorry, I did not understand your request."
   );
+  // return await bot.sendMessage(
+  //   telegramId,
+  //   `Sorry, I don't understand that command  ${ctx.data}`,
+  //   mainMenuButton
+  // );
+  // return replyWithId(
+  //   ctx.from.id,
+  //   `Sorry, I don't understand that command  ${ctx.data}`
+  // );
 }
