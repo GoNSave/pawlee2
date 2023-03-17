@@ -4,6 +4,9 @@ import { handleStartSurvey } from "./survey";
 import { defaultResponse } from "../utils/constants";
 import { bot } from "../utils/telegram";
 const path = require("path");
+const axios = require("axios");
+const fs = require("fs");
+const FormData = require("form-data");
 
 export async function onCommand(ctx, command, param) {
   const execCommand = commands.find((c) => c.command === command);
@@ -104,17 +107,35 @@ export const commands = [
     command: "/tutorial",
     description: "Learn to do less and save more 🔮",
     func: async (ctx, param) => {
-      const imagePath = path.resolve(__dirname, "assets", "tutorial.png");
+      let readStream = fs.createReadStream(
+        "/Users/ashokjaiswal/Downloads/WhatsApp Image 2023-03-14 at 12.20.20 PM.jpeg"
+      );
+      let form = new FormData();
 
-      console.log(imagePath);
       // Send the photo to the user
       try {
-        const r = await bot.sendPhoto({
-          chat_id: ctx.chat.id,
-          // photo: "tutorial.png",
-          photo: `https://images.unsplash.com/photo-1586282023338-52aa50a846ba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80`,
-          caption: `This is my test image`,
+        const imageUrl =
+          "https://images.unsplash.com/photo-1617194191528-9a50cf609304?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3087&q=80";
+        const imageResponse = await axios.get(imageUrl, {
+          responseType: "stream",
         });
+        const readStream = imageResponse.data;
+
+        form.append("photo", readStream);
+        const re = await axios
+          .post(
+            `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/sendPhoto?chat_id=${ctx.chat.id}`,
+            form,
+            {
+              headers: form.getHeaders(),
+            }
+          )
+          .then((response) => {
+            console.log("sent photo already ", response.data);
+          })
+          .catch((error) => {
+            console.log("error in sending file", error);
+          });
       } catch (e) {
         console.log(e);
       }
