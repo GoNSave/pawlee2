@@ -1,6 +1,4 @@
-const axios = require("axios");
-
-process.env.NTBA_FIX_319 = "test";
+import axios from "axios";
 import { onCommand } from "./commands";
 import { onAction } from "./actions";
 import { getUser, updateUser } from "../utils/firebase";
@@ -9,6 +7,7 @@ import { handleQuestion } from "../utils/openai";
 import { defaultResponse } from "../utils/constants";
 const pdfParse = require("pdf-parse");
 
+process.env.NTBA_FIX_319 = "test";
 module.exports = async (request, response) => {
   if (request.body.callback_query) {
     // console.log("callback_query", request.body.callback_query);
@@ -24,6 +23,18 @@ module.exports = async (request, response) => {
 
   const { message } = request.body;
 
+  if (message?.photo) {
+    const photos = message.photo;
+    if (photos.length > 0) {
+      const photoId = photos[photos.length - 1].file_id;
+      const photoUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${photoId}`;
+      console.log(photoUrl);
+      const urlRes = await axios.get(photoUrl);
+      const { file_path } = urlRes.data.result;
+      const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
+      console.log(downloadUrl);
+    }
+  }
   if (message?.document) {
     const pdf = message.document;
     const documentId = pdf.file_id;

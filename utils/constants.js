@@ -1,4 +1,4 @@
-import { bot, reply } from "../utils/telegram";
+import { bot, reply } from "./telegram";
 
 export const userDocName = "users";
 export const questionsDocName = "questions";
