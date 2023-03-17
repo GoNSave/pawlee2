@@ -59,6 +59,118 @@ export const questions = [
     ],
     kye: "purchase",
   },
+  {
+    question: "How often do you take your mobility device to maintenance? ⚙️",
+    answers: [
+      [
+        { text: "Every 2️⃣ weeks" },
+        { text: "Every 4️⃣ weeks" },
+        { text: "Every 6️⃣ weeks" },
+        { text: "Every 8️⃣ weeks" },
+        { text: "Other" },
+      ],
+    ],
+    key: "maintenance_frequency",
+  },
+  {
+    question:
+      "How much do you spend each time you do maintenance to your mobility device? 💸",
+    answers: [
+      [
+        { text: "0 to 50 SGD" },
+        { text: "50 to 100 SGD" },
+        { text: "100 to 250 SGD" },
+        { text: "250 to 500 SGD" },
+        { text: "500+ SGD" },
+        { text: "Other" },
+      ],
+    ],
+    key: "maintenance_cost",
+  },
+  {
+    question:
+      "Where do you spend the greatest amount of money to do your work? 🤑",
+    answers: [
+      [
+        { text: "Maintenance ⚙️" },
+        { text: "Fuel ⛽" },
+        { text: "Mobile phone 📱" },
+        { text: "Internet data for mobile phone 🌐" },
+        { text: "Other" },
+      ],
+    ],
+    key: "work_expenses",
+  },
+  {
+    question: "What do you do during the off-peak hours? ⌛",
+    answers: [
+      [
+        { text: "I have another job 📛" },
+        { text: "I rest 💤" },
+        { text: "I eat 🥢" },
+        { text: "I learn new things 📚" },
+        { text: "I would like to earn extra 💰" },
+        { text: "Other" },
+      ],
+    ],
+    key: "off_peak_activities",
+  },
+  {
+    question: "Do you think you have a stable income? 📈",
+    answers: [[{ text: "Yes 👍" }, { text: "No ⛔" }]],
+    key: "stable_income",
+  },
+  {
+    question:
+      "Are you currently looking for another job or a source of income? 🤝",
+    answers: [
+      [
+        { text: "Yes 👍" },
+        { text: "No ⛔" },
+        { text: "I already have another part-time job" },
+      ],
+    ],
+    key: "looking_for_job",
+  },
+  {
+    question:
+      "Do you feel that advice can help to increase your income as a rider? 🫰",
+    answers: [[{ text: "Yes 👍" }, { text: "No ⛔" }]],
+    key: "advice_for_income",
+  },
+  {
+    question:
+      "Have you ever taken out a loan from a bank within the past five years? 💵",
+    answers: [[{ text: "Yes 👍" }, { text: "No ⛔" }]],
+    key: "loan_history",
+  },
+  {
+    question: "Do you record your monthly income and expenses? 📋",
+    answers: [[{ text: "Yes 👍" }, { text: "No ⛔" }]],
+    key: "record_income_expenses",
+  },
+  {
+    question:
+      "Have you ever had an accident that stopped you from earning an income? ✋",
+    answers: [[{ text: "Yes 👍" }, { text: "No ⛔" }]],
+    key: "accident_stopped_income",
+  },
+  {
+    question: "Do you have insurance on your mobility device? 💰",
+    answers: [[{ text: "Yes 👍" }, { text: "No ⛔" }]],
+    key: "mobility_device_insurance",
+  },
+  {
+    question:
+      "Do you have income Insurance? Meaning that if you have an accident, they will give you some money to keep your income during recovery time? 💱",
+    answers: [[{ text: "Yes 👍" }, { text: "No ⛔" }]],
+    key: "income_insurance",
+  },
+  {
+    question: "Do you save for retirement? 👴",
+    answers: [[{ text: "Yes 👍" }, { text: "No ⛔" }]],
+    key: "save_for_retirement",
+  },
 ];
 
 const showMainMenu = async (ctx, text) => {
