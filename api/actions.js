@@ -3,8 +3,15 @@ import { reply, bot } from "./../utils/telegram";
 import { getAnswer } from "./../utils/openai";
 import { replyWithId } from "./../utils/telegram";
 import { updateUser } from "./../utils/firebase";
-import { AnswerResponse, MainMenu, EditProfile } from "../utils/constants";
-
+import {
+  AnswerResponse,
+  MainMenu,
+  EditProfile,
+  SurgeFee,
+  LikeDislikeMainMenu,
+  QuestIncentive,
+} from "../utils/constants";
+import { defaultResponse } from "../utils/constants";
 export const actions = [
   {
     action: "handleTalkToPawlee",
@@ -86,28 +93,11 @@ export const actions = [
     action: "handleAnnouncements",
     description: "Send announcements",
     func: async (ctx, param) => {
-      const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
-      const announcement = `
-      
-      \n CW09 Mon - Fri  Motorbike/Cars/Ebike
-      
-       \nMon, 27 Feb, 12 am - Fri, 03 Mar 11:59 pm 
-       Make 45 orders 👉 receive +$21
-       Make 60 orders 👉 receive +$52
-       Make 80 orders 👉 receive +$85
-       Make 95 orders 👉 receive +$113
-       Make 115 orders 👉 receive +$144
-      
-      \n CW10 Mon - Fri  Motorbike/Cars/Ebike
-      
-       \nMon, 27 Feb, 12 am - Fri, 03 Mar 11:59 pm 
-       Make 45 orders 👉 receive +$21
-       Make 60 orders 👉 receive +$52
-       Make 80 orders 👉 receive +$85
-       Make 95 orders 👉 receive +$113
-       Make 115 orders 👉 receive +$144
-      \n *90% Acceptance Rate & 95% Actual vs Planned`;
-      return await bot.sendMessage(telegramId, announcement, AnswerResponse);
+      return await bot.sendMessage(
+        ctx.from.id,
+        `\n Please chose the announcement time... `,
+        SurgeFee
+      );
     },
   },
   {
@@ -155,6 +145,69 @@ export const actions = [
     description: "Edit Profile ",
     func: async (ctx, param) => {
       return await bot.sendMessage(ctx.from.id, `Edit ${param}\n`);
+    },
+  },
+  {
+    action: "handleIncentives",
+    description: "Handle Incentives",
+    func: async (ctx, param) => {
+      return await bot.sendMessage(
+        ctx.from.id,
+        `Chose the incentive duration\n`,
+        QuestIncentive
+      );
+    },
+  },
+  {
+    action: "LikeDislikeMainMenu",
+    description: "Handle Incentives",
+    func: async (ctx, param) => {
+      return await bot.sendMessage(
+        ctx.from.id,
+        `Chose the action below\n`,
+        MainMenu
+      );
+    },
+  },
+  {
+    action: "handleQuestIncentive",
+    description: "Handle Quest Incentives",
+    func: async (ctx, param) => {
+      const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
+      const announcement = `
+      
+      \n The serge fee for ${param}
+       Make 45 orders 👉 receive +$21
+       Make 60 orders 👉 receive +$52
+       Make 80 orders 👉 receive +$85
+       Make 95 orders 👉 receive +$113
+       Make 115 orders 👉 receive +$144`;
+      return await bot.sendMessage(
+        telegramId,
+        announcement,
+        LikeDislikeMainMenu
+      );
+    },
+  },
+  {
+    action: "handleSurgeFee",
+    description: "Handle Incentives",
+
+    func: async (ctx, param) => {
+      const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
+      const announcement = `
+      
+      \n The serge fee for ${param}
+       Make 45 orders 👉 receive +$21
+       Make 60 orders 👉 receive +$52
+       Make 80 orders 👉 receive +$85
+       Make 95 orders 👉 receive +$113
+       Make 115 orders 👉 receive +$144`;
+      return await bot.sendMessage(
+        telegramId,
+        announcement,
+        LikeDislikeMainMenu
+      );
     },
   },
 ];

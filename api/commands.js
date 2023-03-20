@@ -115,7 +115,7 @@ export const commands = [
       // Send the photo to the user
       try {
         const imageUrl =
-          "https://images.unsplash.com/photo-1617194191528-9a50cf609304?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3087&q=80";
+          "https://firebasestorage.googleapis.com/v0/b/gns-gpt-bot.appspot.com/o/assets%2Fpawlee-2-tutorial.png?alt=media&token=64da5765-8fa9-4dca-bee2-d5fb0f37d77d";
         const imageResponse = await axios.get(imageUrl, {
           responseType: "stream",
         });
@@ -139,6 +139,50 @@ export const commands = [
       } catch (e) {
         console.log(e);
       }
+      const weather =
+        "Press 👉 /menu to see all the options that I have for you.";
+      return reply(ctx, weather);
+    },
+  },
+  {
+    command: "/unlock",
+    description: "Unlock access to save 🔓",
+    func: async (ctx, param) => {
+      let readStream = fs.createReadStream(
+        "/Users/ashokjaiswal/Downloads/WhatsApp Image 2023-03-14 at 12.20.20 PM.jpeg"
+      );
+      let form = new FormData();
+
+      // Send the photo to the user
+      try {
+        const imageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/gns-gpt-bot.appspot.com/o/assets%2Fpawlee2-share-receipt.png?alt=media&token=06f2edda-b1af-4ae3-b104-eac2b31869bb";
+        const imageResponse = await axios.get(imageUrl, {
+          responseType: "stream",
+        });
+        const readStream = imageResponse.data;
+
+        form.append("photo", readStream);
+        const re = await axios
+          .post(
+            `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/sendPhoto?chat_id=${ctx.chat.id}`,
+            form,
+            {
+              headers: form.getHeaders(),
+            }
+          )
+          .then((response) => {
+            console.log("sent photo already ", response.data);
+          })
+          .catch((error) => {
+            console.log("error in sending file", error);
+          });
+      } catch (e) {
+        console.log(e);
+      }
+      const weather =
+        "Now, attach the requested pdf file by clicking the 📎 image on your device.";
+      return reply(ctx, weather);
     },
   },
 ];

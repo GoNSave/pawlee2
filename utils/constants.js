@@ -27,6 +27,28 @@ export const AnswerResponse = {
   },
 };
 
+export const LikeDislikeMainMenu = {
+  //   reply_to_message_id: ctx.message_id,
+  reply_markup: {
+    inline_keyboard: [
+      [
+        {
+          text: "👍",
+          callback_data: "LikeDislikeMainMenu:Like",
+        },
+        {
+          text: "👎",
+          callback_data: "LikeDislikeMainMenu:Dislike",
+        },
+        {
+          text: "⬅️",
+          callback_data: "LikeDislikeMainMenu:End",
+        },
+      ],
+    ],
+  },
+};
+
 export const MainMenu = {
   //   reply_to_message_id: ctx.message_id,
   reply_markup: {
@@ -95,6 +117,60 @@ export const EditProfile = {
         {
           text: "📋 Back to Main Menu ⬅️",
           callback_data: "handleMainMenu:Company",
+        },
+      ],
+    ],
+  },
+};
+
+export const SurgeFee = {
+  //   reply_to_message_id: ctx.message_id,
+  reply_markup: {
+    resize_keyboard: false,
+    inline_keyboard: [
+      [
+        {
+          text: "Next 2 hours",
+          callback_data: "handleSurgeFee:Next 2 Hours",
+        },
+        {
+          text: "Today",
+          callback_data: "handleSurgeFee:Today",
+        },
+      ],
+      [
+        {
+          text: "Tomorrow",
+          callback_data: "handleSurgeFee:Tomorrow",
+        },
+        {
+          text: "This Week",
+          callback_data: "handleSurgeFee:This Week",
+        },
+      ],
+      [
+        {
+          text: "Next Week",
+          callback_data: "handleSurgeFee:Next Week",
+        },
+      ],
+    ],
+  },
+};
+
+export const QuestIncentive = {
+  //   reply_to_message_id: ctx.message_id,
+  reply_markup: {
+    resize_keyboard: false,
+    inline_keyboard: [
+      [
+        {
+          text: "This Week",
+          callback_data: "handleQuestIncentive:This Week",
+        },
+        {
+          text: "Next Week",
+          callback_data: "handleQuestIncentive:Next Week",
         },
       ],
     ],

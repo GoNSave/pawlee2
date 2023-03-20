@@ -62,13 +62,9 @@ export const questions = [
   {
     question: "How often do you take your mobility device to maintenance? ⚙️",
     answers: [
-      [
-        { text: "Every 2️⃣ weeks" },
-        { text: "Every 4️⃣ weeks" },
-        { text: "Every 6️⃣ weeks" },
-        { text: "Every 8️⃣ weeks" },
-        { text: "Other" },
-      ],
+      [{ text: "Every 2️⃣ weeks" }, { text: "Every 4️⃣ weeks" }],
+      [{ text: "Every 6️⃣ weeks" }, { text: "Every 8️⃣ weeks" }],
+      [{ text: "Other" }],
     ],
     key: "maintenance_frequency",
   },
@@ -76,14 +72,9 @@ export const questions = [
     question:
       "How much do you spend each time you do maintenance to your mobility device? 💸",
     answers: [
-      [
-        { text: "0 to 50 SGD" },
-        { text: "50 to 100 SGD" },
-        { text: "100 to 250 SGD" },
-        { text: "250 to 500 SGD" },
-        { text: "500+ SGD" },
-        { text: "Other" },
-      ],
+      [{ text: "0 to 50 SGD" }, { text: "50 to 100 SGD" }],
+      [{ text: "100 to 250 SGD" }, { text: "250 to 500 SGD" }],
+      [{ text: "500+ SGD" }, { text: "Other" }],
     ],
     key: "maintenance_cost",
   },
@@ -91,27 +82,20 @@ export const questions = [
     question:
       "Where do you spend the greatest amount of money to do your work? 🤑",
     answers: [
-      [
-        { text: "Maintenance ⚙️" },
-        { text: "Fuel ⛽" },
-        { text: "Mobile phone 📱" },
-        { text: "Internet data for mobile phone 🌐" },
-        { text: "Other" },
-      ],
+      [{ text: "Internet data for mobile phone 🌐" }],
+      [{ text: "Maintenance ⚙️" }, { text: "Fuel ⛽" }],
+      [{ text: "Mobile phone 📱" }, { text: "Other" }],
     ],
     key: "work_expenses",
   },
   {
     question: "What do you do during the off-peak hours? ⌛",
     answers: [
-      [
-        { text: "I have another job 📛" },
-        { text: "I rest 💤" },
-        { text: "I eat 🥢" },
-        { text: "I learn new things 📚" },
-        { text: "I would like to earn extra 💰" },
-        { text: "Other" },
-      ],
+      [{ text: "I rest 💤" }, { text: "I eat 🥢" }],
+      [{ text: "I would like to earn extra 💰" }],
+      [{ text: "I have another job 📛" }],
+      [{ text: "I learn new things 📚" }],
+      [{ text: "Other" }],
     ],
     key: "off_peak_activities",
   },
@@ -124,11 +108,8 @@ export const questions = [
     question:
       "Are you currently looking for another job or a source of income? 🤝",
     answers: [
-      [
-        { text: "Yes 👍" },
-        { text: "No ⛔" },
-        { text: "I already have another part-time job" },
-      ],
+      [{ text: "Yes 👍" }, { text: "No ⛔" }],
+      [{ text: "I already have another part-time job" }],
     ],
     key: "looking_for_job",
   },
