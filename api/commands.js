@@ -39,7 +39,7 @@ export const commands = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.chat.id,
-        `Hi ${ctx.from.first_name}! \nPlease chose from the menu below`,
+        `Hi ${ctx.from.first_name}! \nPlease chose from the menu below to continue...`,
         MainMenu
       );
     },
