@@ -3,6 +3,8 @@ import { reply } from "../utils/telegram";
 import { handleStartSurvey } from "./survey";
 import { defaultResponse } from "../utils/constants";
 import { bot } from "../utils/telegram";
+import { MainMenu } from "../utils/constants";
+
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs");
@@ -22,6 +24,24 @@ export const commands = [
     description: "Start saving now 📖",
     func: async (ctx, param) => {
       return await handleStartSurvey(ctx);
+    },
+  },
+  {
+    command: "/help",
+    description: "this is to help you 📖",
+    func: async (ctx, param) => {
+      return reply(ctx, `Thank you for your message, how can I help you?`);
+    },
+  },
+  {
+    command: "/menu",
+    description: "this is the main menu",
+    func: async (ctx, param) => {
+      return await bot.sendMessage(
+        ctx.chat.id,
+        `Hi ${ctx.from.first_name}! \nPlease chose from the menu below`,
+        MainMenu
+      );
     },
   },
   {

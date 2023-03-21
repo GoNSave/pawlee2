@@ -6,6 +6,12 @@ import { surveyResponse } from "./survey";
 import { handleQuestion } from "../utils/openai";
 import { defaultResponse } from "../utils/constants";
 const pdfParse = require("pdf-parse");
+import { bot } from "../utils/telegram";
+
+const welcome = `Are you a food delivery rider or car driver 🏍️ 🚴 🚗 looking for an easier way to manage your daily tasks? Look no further than PawLee, your free personal assistant. With PawLee, you can get personalised answers to your questions and make your job more efficient 💰.\n
+Let's see how PawLee can help you! 😎\n
+Start by earning now! We will give you a monetary incentive after you answer our onboarding survey 💵💵💵
+👉 The more you share, the better we can help you!`;
 
 process.env.NTBA_FIX_319 = "test";
 module.exports = async (request, response) => {
@@ -17,6 +23,10 @@ module.exports = async (request, response) => {
 
   let ctx = request.body.message;
 
+  // if (ctx.chat.type === "private") {
+  //   await bot.sendMessage(ctx.chat.id, welcome);
+  //   return response.send("OK");
+  // }
   ctx.user = await getUser({
     telegramId: ctx.from.id,
   });

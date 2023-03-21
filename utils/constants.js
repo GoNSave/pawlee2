@@ -60,28 +60,38 @@ export const MainMenu = {
           callback_data: "handleTalkToPawlee:Talk with PawLee",
         },
         {
-          text: "\n💸 Income Tracker\n",
+          text: "💸 Income Tracker",
           callback_data: "handleIncomeTracker:Income Tracker",
         },
       ],
       [
         {
-          text: "\n📣 Incentives\n",
+          text: "📣 Quest Incentives",
           callback_data: "handleIncentives:Incentives",
         },
         {
-          text: "\n📣 Announcements\n",
+          text: "📣 Surge Fees",
           callback_data: "handleAnnouncements:Announcements",
         },
       ],
       [
         {
-          text: "\n💰 Extra Earnings\n",
+          text: "💰 Extra Earnings",
           callback_data: "handleExtraEarnings:Extra Earnings",
         },
         {
-          text: "\n👤 Edit Profile\n",
+          text: "👤 Edit Profile",
           callback_data: "handleProfile:Edit Profile",
+        },
+      ],
+      [
+        {
+          text: "❓ Help",
+          callback_data: "handleHelp:Help me now and help the world",
+        },
+        {
+          text: "🧾 Receipts",
+          callback_data: "handleReceipt:parse this receipt data",
         },
       ],
     ],
@@ -99,17 +109,17 @@ export const EditProfile = {
           callback_data: "handleEditProfile:Zone",
         },
         {
-          text: "\n💸 Vehicle\n",
+          text: "💸 Vehicle",
           callback_data: "handleEditProfile:Vehicle",
         },
       ],
       [
         {
-          text: "\n💸 Company\n",
+          text: "💸 Company",
           callback_data: "handleEditProfile:Company",
         },
         {
-          text: "\n📣 City\n",
+          text: "📣 City",
           callback_data: "handleEditProfile:City",
         },
       ],

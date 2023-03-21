@@ -95,7 +95,7 @@ export const actions = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.from.id,
-        `\n Please chose the announcement time... `,
+        `\n Please chose the surge fee time... `,
         SurgeFee
       );
     },
@@ -174,9 +174,10 @@ export const actions = [
     description: "Handle Quest Incentives",
     func: async (ctx, param) => {
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
-      const announcement = `
-      
-      \n The serge fee for ${param}
+      //in the below function, check the param and pull the data for that duration
+      //quest incentives and show below
+      const announcement = `      
+      \n The cumulative quest for ${param}      
        Make 45 orders 👉 receive +$21
        Make 60 orders 👉 receive +$52
        Make 80 orders 👉 receive +$85
@@ -197,16 +198,36 @@ export const actions = [
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
       const announcement = `
       
-      \n The serge fee for ${param}
-       Make 45 orders 👉 receive +$21
-       Make 60 orders 👉 receive +$52
-       Make 80 orders 👉 receive +$85
-       Make 95 orders 👉 receive +$113
-       Make 115 orders 👉 receive +$144`;
+      \n The surge fee for ${param}
+Mon, 27 Feb:
+👉 3 am - 7 am receive +$1 extra per order
+👉 11 am - 12 pm receive +$2 extra per order
+👉 12 pm - 1 pm receive +$2 extra per order
+👉 5 pm - 6 pm receive +$0.5 extra per order
+👉 6 pm - 7 pm receive +$1 extra per order
+👉 7 pm - 8 pm receive +$1 extra per order`;
       return await bot.sendMessage(
         telegramId,
         announcement,
         LikeDislikeMainMenu
+      );
+    },
+  },
+  {
+    action: "handleHelp",
+    func: async (ctx, param) => {
+      return await bot.sendMessage(
+        ctx.from.id,
+        `This is help funciton ${param}\n`
+      );
+    },
+  },
+  {
+    action: "handleReceipt",
+    func: async (ctx, param) => {
+      return await bot.sendMessage(
+        ctx.from.id,
+        `This is receipt send funciton ${param}\n`
       );
     },
   },
