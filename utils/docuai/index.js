@@ -1,68 +1,181 @@
-/**
- * TODO(developer): Uncomment these variables before running the sample.
- */
+const axios = require("axios");
+const TELEGRAM_API_URL = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/sendMessage`;
+import { promises as fs } from "fs";
+import path from "path";
+const { TranslationServiceClient } = require("@google-cloud/translate");
+const { Translate } = require("@google-cloud/translate").v2;
+
+const vision = require("@google-cloud/vision");
 
 const projectId = "gns-gpt-bot";
 const location = "us"; // Format is 'us' or 'eu'
-const processorId = "e7a923443fcb4ffb"; // Create processor in Cloud Console
-const filePath = "/path/to/local/pdf";
+// const processorId = "e7a923443fcb4ffb"; // form parser id
+const processorId = "1af71b78f04c04c3"; // form processor trained for surge fee
 
 const { DocumentProcessorServiceClient } =
   require("@google-cloud/documentai").v1;
 
-// Instantiates a client
-// apiEndpoint regions available: eu-documentai.googleapis.com, us-documentai.googleapis.com (Required if using eu based processor)
-// const client = new DocumentProcessorServiceClient({apiEndpoint: 'eu-documentai.googleapis.com'});
 const client = new DocumentProcessorServiceClient();
 
-async function quickstart(imageFile) {
-  // The full resource name of the processor, e.g.:
-  // projects/project-id/locations/location/processor/processor-id
-  // You must create new processors in the Cloud Console first
+export const surgeFeeTableParser = async (documentId) => {
+  const { TableExtractionParams } = require("@google-cloud/documentai").v1beta3;
+
   const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
+  const documentUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${documentId}`;
+  console.log("documentUrl", documentUrl);
+  const urlRes = await axios.get(documentUrl);
+  const { file_path } = urlRes.data.result;
+  const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
 
-  // Read the file into memory.
-  //   const fs = require("fs").promises;
-  //   const imageFile = await fs.readFile(filePath);
+  console.log("downloadUrl", downloadUrl);
+  const imageResponse = await axios.get(downloadUrl, {
+    responseType: "arraybuffer",
+  });
+  const imageData = new Uint8Array(imageResponse.data);
 
-  // Convert the image data to a Buffer and base64 encode it.
-  const encodedImage = Buffer.from(imageFile).toString("base64");
+  const imageData64 = Buffer.from(imageData).toString("base64");
 
-  const request = {
+  const processRequest = {
     name,
     rawDocument: {
-      content: encodedImage,
-      mimeType: "application/pdf",
+      content: imageData64,
+      mimeType: "image/jpeg",
     },
   };
+  const [result] = await client.processDocument(processRequest);
+  console.log(result);
+  // const [page] = result.pages;
+  // const [formExtraction] = result.formFields;
+  // const [tableExtraction] = result.tables;
+  // console.log(tableExtraction);
 
-  // Recognizes text entities in the PDF document
-  const [result] = await client.processDocument(request);
-  const { document } = result;
+  // const tableRows = tableExtraction.headerRows.concat(tableExtraction.bodyRows);
+  // console.log(tableRows);
 
-  // Get all of the document text as one big string
-  const { text } = document;
+  // // Use TableExtractionParams to extract the table data
+  // const tableExtractionParams = new TableExtractionParams({
+  //   enabled: true,
+  //   tableBoundHints: [
+  //     {
+  //       boundingBox: tableExtraction.boundingBox,
+  //     },
+  //   ],
+  // });
+  // const [table] = await client.extractTableSpec({
+  //   tableSpec: tableExtractionParams,
+  //   parent: `projects/${projectId}/locations/${location}`,
+  //   inputValue: {
+  //     gcsSource: {
+  //       uri: `gs://${result.outputConfig.gcsDestination.uri}/${result.outputConfig.gcsDestination.objects[0].uri}`,
+  //     },
+  //   },
+  // });
 
-  // Extract shards from the text field
-  const getText = (textAnchor) => {
-    if (!textAnchor.textSegments || textAnchor.textSegments.length === 0) {
-      return "";
-    }
+  // // Use the table data to create a CSV file
+  // const rows = [];
+  // for (const r of table.rows) {
+  //   const row = [];
+  //   for (const c of r.cells) {
+  //     row.push(c.content.trim());
+  //   }
+  //   rows.push(row.join(","));
+  // }
 
-    // First shard in document doesn't have startIndex property
-    const startIndex = textAnchor.textSegments[0].startIndex || 0;
-    const endIndex = textAnchor.textSegments[0].endIndex;
+  // const csvData = rows.join("\n");
 
-    return text.substring(startIndex, endIndex);
-  };
+  // console.log("CSV Data:");
+  // console.log(csvData);
+  // return csvData;
+};
 
-  // Read the text recognition output from the processor
-  console.log("The document contains the following paragraphs:");
-  const [page1] = document.pages;
-  const { paragraphs } = page1;
+export const surgeFeeParser = async (documentId) => {
+  try {
+    const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
+    const documentUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${documentId}`;
+    console.log("documentUrl", documentUrl);
+    const urlRes = await axios.get(documentUrl);
+    const { file_path } = urlRes.data.result;
+    const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
 
-  for (const paragraph of paragraphs) {
-    const paragraphText = getText(paragraph.layout.textAnchor);
-    console.log(`Paragraph text:\n${paragraphText}`);
+    console.log("downloadUrl", downloadUrl);
+    const imageResponse = await axios.get(downloadUrl, {
+      responseType: "arraybuffer",
+    });
+    const imageData = new Uint8Array(imageResponse.data);
+
+    const imageData64 = Buffer.from(imageData).toString("base64");
+
+    const processRequest = {
+      name,
+      rawDocument: {
+        content: imageData64,
+        mimeType: "image/jpeg",
+      },
+    };
+    const [result] = await client.processDocument(processRequest);
+
+    const { text } = result.document;
+
+    const translate = new Translate();
+    const detect = await await translate.detect(text);
+    const source = detect[0].language;
+    const target = "en";
+
+    console.log("translate things", text, source, target);
+
+    return text;
+    // let [translations] = await translate.translate(text, target);
+    // console.log("Translated text is", translations);
+  } catch (e) {
+    console.log("error", e);
   }
-}
+  response.send("Hello");
+};
+
+/*
+      try {
+        const downloadUrl = await getPhotoUrl(
+          photos[photos.length - 1].file_id
+        );
+        console.log("downloadUrl", downloadUrl);
+        const photoData = await getPhotoData(downloadUrl);
+
+        // const photoData8 = new Uint8Array(photoData);
+
+        const photoData64 = Buffer.from(photoData).toString("base64");
+        const visionRequest = {
+          image: {
+            content: Buffer.from(photoData64, "base64"),
+          },
+        };
+
+        const imageClient = new vision.ImageAnnotatorClient();
+
+        const [visionResult] = await imageClient.textDetection(visionRequest);
+
+        console.log(visionResult.fullTextAnnotation.text);
+
+        await bot.sendMessage(
+          ctx.chat.id,
+          visionResult.fullTextAnnotation.text
+        );
+
+        const processName = `projects/${projectId}/locations/${location}/processors/${processorId}`;
+        const processRequest = {
+          processName,
+          rawDocument: {
+            content: photoData64,
+            mimeType: "image/jpeg",
+          },
+        };
+        const [result] = await scannerClient.processDocument(processRequest);
+
+        const { text } = result.document;
+
+        console.log("translate things", text);
+
+        await bot.sendMessage(ctx.chat.id, text);
+      } catch (e) {
+        console.log("error", e);
+      }
+*/

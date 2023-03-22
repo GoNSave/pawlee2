@@ -1,6 +1,7 @@
 import { bot, reply } from "./telegram";
 
 export const userDocName = "users";
+export const countryDocName = "country";
 export const questionsDocName = "questions";
 export const chatDocName = "chat";
 export const filesDocName = "files";
@@ -19,7 +20,7 @@ export const AnswerResponse = {
           callback_data: "answerResponse:Dislike",
         },
         {
-          text: "🤐",
+          text: "🛑 End Chat",
           callback_data: "answerResponse:End",
         },
       ],
@@ -56,13 +57,13 @@ export const MainMenu = {
     inline_keyboard: [
       [
         {
-          text: "🗣 Talk with PawLee",
+          text: "🗣 Chat with PawLee",
           callback_data: "handleTalkToPawlee:Talk with PawLee",
         },
-        {
-          text: "💸 Income Tracker",
-          callback_data: "handleIncomeTracker:Income Tracker",
-        },
+        // {
+        //   text: "💸 Income Tracker",
+        //   callback_data: "handleIncomeTracker:Income Tracker",
+        // },
       ],
       [
         {
@@ -75,14 +76,14 @@ export const MainMenu = {
         },
       ],
       [
-        {
-          text: "💰 Extra Earnings",
-          callback_data: "handleExtraEarnings:Extra Earnings",
-        },
-        {
-          text: "👤 Edit Profile",
-          callback_data: "handleProfile:Edit Profile",
-        },
+        // {
+        //   text: "🧾 Receipts",
+        //   callback_data: "handleReceipt:parse this receipt data",
+        // },
+        // {
+        //   text: "👤 Edit Profile",
+        //   callback_data: "handleProfile:Edit Profile",
+        // },
       ],
       [
         {
@@ -90,8 +91,8 @@ export const MainMenu = {
           callback_data: "handleHelp:Help me now and help the world",
         },
         {
-          text: "🧾 Receipts",
-          callback_data: "handleReceipt:parse this receipt data",
+          text: "👤 Edit Profile",
+          callback_data: "handleProfile:Edit Profile",
         },
       ],
     ],
@@ -168,6 +169,35 @@ export const SurgeFee = {
   },
 };
 
+export const IncomeTracker = {
+  //   reply_to_message_id: ctx.message_id,
+  reply_markup: {
+    resize_keyboard: false,
+    inline_keyboard: [
+      [
+        {
+          text: "Income goal 🏁",
+          callback_data: "handleIncomeTrackerGoal:Income goal 🏁",
+        },
+        {
+          text: "Total income 💰",
+          callback_data: "handleIncomeTrackerGoal:Date 🚩",
+        },
+      ],
+      [
+        {
+          text: "Incentives & Tips +",
+          callback_data: "handleIncomeTrackerGoal:Incentives & Tips +",
+        },
+        {
+          text: "Hour of day 🕔",
+          callback_data: "handleIncomeTrackerGoal:Hour of day 🕔",
+        },
+      ],
+    ],
+  },
+};
+
 export const QuestIncentive = {
   //   reply_to_message_id: ctx.message_id,
   reply_markup: {
@@ -188,7 +218,7 @@ export const QuestIncentive = {
 };
 
 export const defaultResponse = async (ctx, msg = "") => {
-  console.log("---- defaultResponse ----", ctx, msg);
+  // console.log("---- defaultResponse ----", ctx, msg);
   return await bot.sendMessage(
     ctx.chat.id,
     `Hi ${ctx.from.first_name}! \n\n ${msg} \n\n Please chose one of the following to continue... \n\nThanks`,
