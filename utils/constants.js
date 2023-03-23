@@ -141,27 +141,31 @@ export const SurgeFee = {
     inline_keyboard: [
       [
         {
-          text: "Next 2 hours",
+          text: "Next 1 hour ⏰",
+          callback_data: "handleSurgeFee:1",
+        },
+        {
+          text: "Next 2 hours ⏰⏰",
           callback_data: "handleSurgeFee:2",
         },
+      ],
+      [
         {
-          text: "Today",
+          text: "Today 📅",
           callback_data: "handleSurgeFee:24",
         },
-      ],
-      [
         {
-          text: "Tomorrow",
+          text: "Tomorrow 📅",
           callback_data: "handleSurgeFee:48",
         },
-        {
-          text: "This Week",
-          callback_data: "handleSurgeFee:168",
-        },
       ],
       [
         {
-          text: "Next Week",
+          text: "This Week 📅📆",
+          callback_data: "handleSurgeFee:168",
+        },
+        {
+          text: "Next Week 📅📆",
           callback_data: "handleSurgeFee:336",
         },
       ],

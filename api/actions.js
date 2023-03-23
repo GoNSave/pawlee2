@@ -127,7 +127,7 @@ export const actions = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.from.id,
-        `\n Please chose the surge fee time... `,
+        `\n You can make extra money 💵 to work during surge hours 🏃‍♂️, Please chose the surge time for extra fee 💰... `,
         SurgeFee
       );
     },
