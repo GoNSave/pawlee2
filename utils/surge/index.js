@@ -33,9 +33,33 @@ function findNextTwoHourIndex(times) {
   return index;
 }
 
-export async function getSurgeData(zone, time) {
-  console.log("getSurgeData ", zone, time);
+//write a funciton that takes hours as input 24, 48, 168 or 336 hours and return date in format Wed, 20th Jan for 24 hours and 20th - 26th Jan for more than 24 hours
 
+function getDateRange(hours) {
+  const currentDate = new Date();
+  const endDate = new Date(currentDate.getTime() + hours * 60 * 60 * 1000);
+
+  if (hours === 24) {
+    return endDate.toLocaleDateString("en-US", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    });
+  } else {
+    const startDate = currentDate.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+    });
+    const endDateFormatted = endDate.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+    });
+
+    return `${startDate} - ${endDateFormatted}`;
+  }
+}
+
+export async function getSurgeData(zone, time) {
   try {
     const private_key = process.env.GOOGLE_PRIVATE_KEY;
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
@@ -47,10 +71,6 @@ export async function getSurgeData(zone, time) {
     const sheet = doc.sheetsByIndex[0];
     const rows = await sheet.getRows();
     const header = rows[0]._sheet.headerValues;
-    // console.log(header);
-    //5 is staturday
-    //6 is friday
-    // const weekday = 7; //currentTime.getDay();
 
     const currentDate = new Date();
     const currentWeekday = currentDate.toLocaleString("en-US", {
@@ -59,19 +79,17 @@ export async function getSurgeData(zone, time) {
 
     const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-    let message = "The surge in " + zone + " ";
-    if (time === 24) message += ` Today [${"20th Mar"}]: \n`;
-    if (time === 48) message += ` Tomorrow [${"21st Mar"}]: \n`;
-    if (time === 168) message += ` This Week [${"20th Mar - 26th Mar"}]: \n`;
-    if (time === 48) message += ` Next Week [${"27th  Mar - 2nd Apr"}]: \n`;
+    let message =
+      "The surge in " + zone + " for " + getDateRange(Number(time)) + "\n\n";
 
     for (let i = 0; i < rows.length; i += 4) {
       if (rows[i]._rawData[0] === zone) {
         // weekday price
         if (weekdays.slice(0, 4).includes(currentWeekday)) {
           for (let f = 2; f < rows[i]._rawData.length; f++) {
-            if (rows[i]._rawData[f])
-              message += `👉 ${header[f]} receive +${rows[i]._rawData[f]}  extra per order \n`;
+            if (rows[i]._rawData[f]) {
+              message += `👉 ${header[f]}  receive  +${rows[i]._rawData[f]}  extra per order \n`;
+            }
           }
           console.log(message);
           return message;
