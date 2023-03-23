@@ -6,6 +6,7 @@ const FormData = require("form-data");
 import { getAnswer } from "./../utils/openai";
 import { replyWithId } from "./../utils/telegram";
 import { updateUser } from "./../utils/firebase";
+import { getSurgeData } from "./../utils/surge";
 import {
   AnswerResponse,
   MainMenu,
@@ -226,6 +227,8 @@ export const actions = [
     description: "Handle Incentives",
 
     func: async (ctx, param) => {
+      // console.log(ctx, param);
+      const res = await getSurgeData(ctx.user.zone, param);
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
       const announcement = `
       
@@ -343,11 +346,11 @@ export async function handleBackToMainMenu(ctx, param) {
 
 export async function onAction(ctx) {
   const actionData = ctx.data.split(":");
-  console.log("--------------------------------");
-  console.log("in onAction", actionData, ctx);
-  console.log("--------------------------------");
+  // console.log("--------------------------------");
+  // console.log("in onAction", actionData, ctx);
+  // console.log("--------------------------------");
   for (const action of actions) {
-    console.log("Find the action and call it", actionData[0], action.action);
+    // console.log("Find the action and call it", actionData[0], action.action);
     if (action.action === actionData[0]) {
       return await action.func(ctx, actionData[1]);
     }

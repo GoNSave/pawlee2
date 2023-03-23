@@ -27,13 +27,19 @@ const scannerClient = new DocumentProcessorServiceClient();
 process.env.NTBA_FIX_319 = "test";
 
 module.exports = async (request, response) => {
+  let ctx = request.body.callback_query;
+
+  ctx.user = await getUser({
+    telegramId: ctx.from.id,
+  });
+
   if (request.body.callback_query) {
     // console.log("callback_query", request.body.callback_query);
     await onAction(request.body.callback_query);
     return response.send("OK");
   }
 
-  let ctx = request.body.message;
+  ctx = request.body.message;
 
   ctx.user = await getUser({
     telegramId: ctx.from.id,

@@ -142,27 +142,27 @@ export const SurgeFee = {
       [
         {
           text: "Next 2 hours",
-          callback_data: "handleSurgeFee:Next 2 Hours",
+          callback_data: "handleSurgeFee:2",
         },
         {
           text: "Today",
-          callback_data: "handleSurgeFee:Today",
+          callback_data: "handleSurgeFee:24",
         },
       ],
       [
         {
           text: "Tomorrow",
-          callback_data: "handleSurgeFee:Tomorrow",
+          callback_data: "handleSurgeFee:48",
         },
         {
           text: "This Week",
-          callback_data: "handleSurgeFee:This Week",
+          callback_data: "handleSurgeFee:168",
         },
       ],
       [
         {
           text: "Next Week",
-          callback_data: "handleSurgeFee:Next Week",
+          callback_data: "handleSurgeFee:336",
         },
       ],
     ],
