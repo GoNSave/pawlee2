@@ -179,8 +179,10 @@ const handleQuestion = async (
   show_keyboard = false
 ) => {
   let { question: text, answers } = question;
-  text = msg ? msg + "\n" + text : text;
+  // text = msg ? msg + "\n" + text : text;
   //   reply_to_message_id: ctx.message_id,
+  if (msg) await bot.sendMessage(ctx.chat.id, msg);
+
   return await bot.sendMessage(ctx.chat.id, text, {
     reply_markup: {
       // force_reply: true,
@@ -247,7 +249,7 @@ export async function surveyResponse(ctx) {
 
   await bot.sendMessage(
     ctx.chat.id,
-    `Hi ${ctx.from.first_name}! \n 🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝 `
+    `Hi ${ctx.from.first_name}! \n\n🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝 `
   );
 
   try {
@@ -268,10 +270,7 @@ export async function surveyResponse(ctx) {
         headers: form.getHeaders(),
       }
     );
-    return showMainMenu(
-      ctx,
-      "\n\n 🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝 \n\n"
-    );
+    return showMainMenu(ctx, "");
   } catch (e) {
     console.log(e);
   }
@@ -295,13 +294,13 @@ export async function handleStartSurvey(ctx) {
   //   reply_to_message_id: ctx.message_id,
   return await bot.sendMessage(
     ctx.chat.id,
-    `Hi ${ctx.from.first_name}! \n Ready to answer a few quick questions and earn $6 SGD of extra money? 💰💰`,
+    `Hi ${ctx.from.first_name}! \nReady to answer a few quick questions and earn $6 SGD of extra money? 💰💰`,
     {
       reply_markup: {
         force_reply: true,
         resize_keyboard: true,
         one_time_keyboard: false,
-        keyboard: [[{ text: "🏁 " }, { text: "Let's Got " }, { text: "🏁 " }]],
+        keyboard: [[{ text: "🏁 " }, { text: "Let's Go " }, { text: "🏁 " }]],
       },
     }
   );

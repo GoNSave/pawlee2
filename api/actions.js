@@ -228,18 +228,18 @@ export const actions = [
 
     func: async (ctx, param) => {
       // console.log(ctx, param);
-      const res = await getSurgeData(ctx.user.zone, param);
+      const announcement = await getSurgeData(ctx.user.zone, param.trim());
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
-      const announcement = `
-      
-      \n The surge fee for ${param}
-Mon, 27 Feb:
-👉 3 am - 7 am receive +$1 extra per order
-👉 11 am - 12 pm receive +$2 extra per order
-👉 12 pm - 1 pm receive +$2 extra per order
-👉 5 pm - 6 pm receive +$0.5 extra per order
-👉 6 pm - 7 pm receive +$1 extra per order
-👉 7 pm - 8 pm receive +$1 extra per order`;
+      //       const announcement = `
+
+      //       \n The surge fee for ${param}
+      // Mon, 27 Feb:
+      // 👉 3 am - 7 am receive +$1 extra per order
+      // 👉 11 am - 12 pm receive +$2 extra per order
+      // 👉 12 pm - 1 pm receive +$2 extra per order
+      // 👉 5 pm - 6 pm receive +$0.5 extra per order
+      // 👉 6 pm - 7 pm receive +$1 extra per order
+      // 👉 7 pm - 8 pm receive +$1 extra per order`;
       return await bot.sendMessage(
         telegramId,
         announcement,

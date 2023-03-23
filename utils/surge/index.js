@@ -34,7 +34,7 @@ function findNextTwoHourIndex(times) {
 }
 
 export async function getSurgeData(zone, time) {
-  // console.log("getSurgeData ", weekday, zone, time);
+  console.log("getSurgeData ", zone, time);
 
   try {
     const private_key = process.env.GOOGLE_PRIVATE_KEY;
@@ -56,19 +56,25 @@ export async function getSurgeData(zone, time) {
     const currentWeekday = currentDate.toLocaleString("en-US", {
       weekday: "short",
     });
+
     const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+    let message = "The surge in " + zone + " ";
+    if (time === 24) message += ` Today [${"20th Mar"}]: \n`;
+    if (time === 48) message += ` Tomorrow [${"21st Mar"}]: \n`;
+    if (time === 168) message += ` This Week [${"20th Mar - 26th Mar"}]: \n`;
+    if (time === 48) message += ` Next Week [${"27th  Mar - 2nd Apr"}]: \n`;
 
     for (let i = 0; i < rows.length; i += 4) {
       if (rows[i]._rawData[0] === zone) {
-        console.log(
-          "zone found",
-          rows[i]._rawData[0],
-          "weekday",
-          currentWeekday
-        );
         // weekday price
         if (weekdays.slice(0, 4).includes(currentWeekday)) {
-          console.log("weekdays", rows[i]._rawData[1]);
+          for (let f = 2; f < rows[i]._rawData.length; f++) {
+            if (rows[i]._rawData[f])
+              message += `👉 ${header[f]} receive +${rows[i]._rawData[f]}  extra per order \n`;
+          }
+          console.log(message);
+          return message;
         }
         // weekend price
         console.log("check if it's weekend", currentWeekday);
