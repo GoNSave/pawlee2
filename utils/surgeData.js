@@ -18,6 +18,21 @@ async function quickstart() {
     await doc.getInfo();
     const sheet = doc.sheetsByIndex[0];
     const rows = await sheet.getRows();
+    console.log(rows[0]._sheet.headerValues);
+    console.log(rows[0]._rawData);
+
+    console.log(rows[1]._sheet.headerValues);
+    console.log(rows[1]._rawData);
+
+    console.log(rows[2]._sheet.headerValues);
+    console.log(rows[2]._rawData);
+
+    console.log(rows[3]._sheet.headerValues);
+    console.log(rows[3]._rawData);
+
+    // rows.map((row) => {
+    //   console.log(row);
+    // });
     const raw_data = rows[0]._rawData;
     const header_values = rows[0]._sheet.headerValues;
     const row_value = rows[0];
@@ -25,7 +40,7 @@ async function quickstart() {
     // rows[0][id] = Number(row_value) + 1;
     // await rows[0].save();
 
-    console.log("raw_data", rows);
+    // console.log("raw_data", row_value);
   } catch (e) {
     console.log("----------- error -----------");
     console.log("error", e);
