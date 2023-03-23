@@ -1,4 +1,7 @@
 import { reply, bot } from "./../utils/telegram";
+const axios = require("axios");
+const fs = require("fs");
+const FormData = require("form-data");
 
 import { getAnswer } from "./../utils/openai";
 import { replyWithId } from "./../utils/telegram";
@@ -10,12 +13,13 @@ import {
   SurgeFee,
   LikeDislikeMainMenu,
   QuestIncentive,
+  IncomeTracker,
 } from "../utils/constants";
 import { defaultResponse } from "../utils/constants";
 export const actions = [
   {
     action: "handleTalkToPawlee",
-    description: "Talk to Pawlee",
+    description: "Chat Pawlee",
     func: async (ctx, param) => {
       console.log("handleTalkToPawlee ------", ctx);
       const keyboard = {
@@ -52,18 +56,18 @@ export const actions = [
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
       await bot.sendMessage(
         telegramId,
-        `Hi ${ctx.from.first_name}! \n\n I'm Pawlee, your personal assistant. You can ask me anything you want, try any of following...`,
+        `Hi ${ctx.from.first_name}! 👋 \nAs an AI language model, I'm here to assist you in finding information quickly and easily, making your work more efficient`,
         keyboard
       );
       return await bot.sendMessage(
         telegramId,
-        `\n\n our just type your question ...`
+        `\n\n Ask me anything work-related, and I'll provide the best answer I can!`
       );
     },
   },
   {
     action: "replyFromPawlee",
-    description: "Talk to Pawlee",
+    description: "Chat with Pawlee",
     func: async (ctx, param) => {
       console.log("replyFromPawlee ------", param);
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
@@ -87,6 +91,33 @@ export const actions = [
         `It was pleasure talking to you ${ctx?.from?.first_name}, let's talk again soon.`,
         MainMenu
       );
+    },
+  },
+  {
+    action: "handleIncomeTracker",
+    description: "Send announcements",
+    func: async (ctx, param) => {
+      await bot.sendMessage(
+        ctx.from.id,
+        `\n Hey ${ctx?.from?.first_name}, 👋 Juggling multiple sources of income can be a hassle. Let me simplify things for you by putting everything in one place!`
+      );
+      await bot.sendMessage(
+        ctx.from.id,
+        `\n Just share your income statements, and we'll provide a summary of your earnings.`
+      );
+      return await bot.sendMessage(
+        ctx.from.id,
+        `\n Plus, by sharing, you'll unlock constant access to all PawLee features. Work smarter, not harder. Are you ready?`,
+        IncomeTracker
+      );
+    },
+  },
+
+  {
+    action: "handleIncomeTrackerGoal",
+    description: "Send announcements",
+    func: async (ctx, param) => {
+      return await bot.sendMessage(ctx.from.id, `\n income goal is ${param}`);
     },
   },
   {
@@ -216,10 +247,42 @@ Mon, 27 Feb:
   {
     action: "handleHelp",
     func: async (ctx, param) => {
-      return await bot.sendMessage(
-        ctx.from.id,
-        `This is help funciton ${param}\n`
+      console.log(ctx, param);
+      let readStream = fs.createReadStream(
+        "/Users/ashokjaiswal/Downloads/WhatsApp Image 2023-03-14 at 12.20.20 PM.jpeg"
       );
+      let form = new FormData();
+
+      // Send the photo to the user
+      try {
+        const imageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/gns-gpt-bot.appspot.com/o/assets%2Fpawlee-2-tutorial.png?alt=media&token=64da5765-8fa9-4dca-bee2-d5fb0f37d77d";
+        const imageResponse = await axios.get(imageUrl, {
+          responseType: "stream",
+        });
+        const readStream = imageResponse.data;
+
+        form.append("photo", readStream);
+        const re = await axios
+          .post(
+            `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/sendPhoto?chat_id=${ctx.from.id}`,
+            form,
+            {
+              headers: form.getHeaders(),
+            }
+          )
+          .then((response) => {
+            console.log("sent photo already ", response.data);
+          })
+          .catch((error) => {
+            console.log("error in sending file", error);
+          });
+      } catch (e) {
+        console.log(e);
+      }
+      // const weather =
+      //   "Press 👉 /menu to see all the options that I have for you.";
+      // return reply(ctx, weather);
     },
   },
   {

@@ -1,4 +1,9 @@
 import { reply, bot } from "../utils/telegram";
+const path = require("path");
+const axios = require("axios");
+const fs = require("fs");
+const FormData = require("form-data");
+
 import {
   addUser,
   saveMessage,
@@ -44,8 +49,13 @@ export const questions = [
   {
     question: "What's your preferred zone in SG to work in? 📍 ",
     answers: [
-      [{ text: "👉 SG North" }, { text: "👈 SG South" }],
-      [{ text: "👆 SG East" }, { text: "👇 SG West" }],
+      [{ text: "Sengkang" }, { text: "West" }],
+      [{ text: "Panjang" }, { text: "Yishun" }],
+      [{ text: "Bedok" }, { text: "Serangoon" }],
+      [{ text: "Geylang" }, { text: "Bukit Timah" }],
+      [{ text: "East" }, { text: "Far East" }],
+      [{ text: "SG South" }, { text: "AMK" }],
+      [{ text: "Woodlands" }],
     ],
     key: "zone",
   },
@@ -168,8 +178,6 @@ const handleQuestion = async (
   msg = "",
   show_keyboard = false
 ) => {
-  console.log("handleQuestion------", question);
-
   let { question: text, answers } = question;
   text = msg ? msg + "\n" + text : text;
   //   reply_to_message_id: ctx.message_id,
@@ -185,10 +193,8 @@ const handleQuestion = async (
 
 export async function surveyResponse(ctx) {
   let qIndex = ctx.user.questionIndex ? ctx.user.questionIndex : 0;
-
-  console.log("surveyResponse------", qIndex);
-
-  if (qIndex < questions.length) {
+  //its the let's go message, nothing to be done
+  if (qIndex === 0) {
     await updateUser({
       telegramId: ctx.from.id,
       questionIndex: qIndex + 1,
@@ -200,64 +206,74 @@ export async function surveyResponse(ctx) {
       qIndex >= questions.length - 1
     );
   }
+
+  if (qIndex < questions.length) {
+    console.log(
+      "surveyResponse question is ",
+      [questions[qIndex - 1].key],
+      " answer is ",
+      ctx.text
+    );
+    const isAnswerCorrect = questions[qIndex - 1].answers.some((answerGroup) =>
+      answerGroup.some((answer) => answer.text === ctx.text)
+    );
+
+    if (!isAnswerCorrect) {
+      return handleQuestion(
+        ctx,
+        questions[qIndex - 1],
+        `"${ctx.text}" is invalid answer, please chose one of the following... \n\n`,
+        qIndex >= questions.length - 1
+      );
+    }
+    await updateUser({
+      telegramId: ctx.from.id,
+      questionIndex: qIndex + 1,
+      [questions[qIndex - 1].key]: ctx.text,
+    });
+
+    return handleQuestion(
+      ctx,
+      questions[qIndex],
+      "",
+      qIndex >= questions.length - 1
+    );
+  }
+  console.log("update user in surveRespone when survey ends");
   await updateUser({
     telegramId: ctx.from.id,
     lastCommand: "none",
   });
 
-  return showMainMenu(
-    ctx,
-    "\n\n 🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝 \n\n"
+  await bot.sendMessage(
+    ctx.chat.id,
+    `Hi ${ctx.from.first_name}! \n 🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝 `
   );
-}
 
-export async function surveyResponse1(ctx) {
-  const qIndex = ctx.user.questionIndex ? ctx.user.questionIndex : 0;
-  console.log("surveyResponse------", qIndex);
+  try {
+    const imageUrl =
+      "https://firebasestorage.googleapis.com/v0/b/gns-gpt-bot.appspot.com/o/assets%2Fpawlee-2-tutorial.png?alt=media&token=64da5765-8fa9-4dca-bee2-d5fb0f37d77d";
+    const imageResponse = await axios.get(imageUrl, {
+      responseType: "stream",
+    });
+    const readStream = imageResponse.data;
 
-  if (qIndex === 0) {
-    await updateUser({ telegramId: ctx.from.id, questionIndex: qIndex + 1 });
-    return handleQuestion(ctx, questions[qIndex + 1]);
-  }
+    let form = new FormData();
 
-  if (qIndex >= questions.length) {
-    if (!ctx.user.welcomed) {
-      console.log("user not welcomed yet");
-      try {
-        await updateUser({
-          telegramId: ctx.message.from.id,
-          welcomed: true,
-        });
-      } catch (err) {
-        console.log("Update user error", err);
+    form.append("photo", readStream);
+    const re = await axios.post(
+      `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/sendPhoto?chat_id=${ctx.chat.id}`,
+      form,
+      {
+        headers: form.getHeaders(),
       }
-      await reply(
-        "🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝"
-      );
-      return showMainMenu(ctx);
-    }
-  }
-
-  for (const answer of questions[qIndex].answers.flat()) {
-    if (answer.text.includes(ctx.text)) {
-      try {
-        await updateUser({
-          telegramId: ctx.from.id,
-          questionIndex: qIndex + 1,
-          [questions[qIndex].key]: ctx.text,
-        });
-      } catch (err) {
-        console.log("Update user error", err);
-      }
-      if (qIndex + 1 < questions.length) {
-        return handleQuestion(ctx, questions[qIndex + 1]);
-      } else {
-        await reply(
-          "🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝"
-        );
-        return showMainMenu(ctx);
-      }
-    }
+    );
+    return showMainMenu(
+      ctx,
+      "\n\n 🎉👏 Hooray! Your answers have been received and will help us personalize your experience. Thanks for taking the time! 🙌🤝 \n\n"
+    );
+  } catch (e) {
+    console.log(e);
   }
 }
 
@@ -274,11 +290,12 @@ export async function handleStartSurvey(ctx) {
     questionIndex: 0,
   };
 
+  console.log("update user in handleStartSurvey");
   const user = await updateUser(userData);
   //   reply_to_message_id: ctx.message_id,
   return await bot.sendMessage(
     ctx.chat.id,
-    `Hi ${ctx.from.first_name}! \n Ready to answer a few quick questions and earn $6 SGD of extra money?`,
+    `Hi ${ctx.from.first_name}! \n Ready to answer a few quick questions and earn $6 SGD of extra money? 💰💰`,
     {
       reply_markup: {
         force_reply: true,

@@ -1,19 +1,31 @@
 import axios from "axios";
 import { onCommand } from "./commands";
 import { onAction } from "./actions";
-import { getUser, updateUser } from "../utils/firebase";
+import {
+  getUser,
+  updateUser,
+  getZones,
+  getFeeForZone,
+} from "../utils/firebase";
 import { surveyResponse } from "./survey";
 import { handleQuestion } from "../utils/openai";
 import { defaultResponse } from "../utils/constants";
+import { getPhotoUrl, getPhotoData } from "../utils/noaxios";
+import { surgeFeeTableParser } from "../utils/docuai";
+import { reply, bot } from "../utils/telegram";
+const vision = require("@google-cloud/vision");
 const pdfParse = require("pdf-parse");
-import { bot } from "../utils/telegram";
+const { DocumentProcessorServiceClient } =
+  require("@google-cloud/documentai").v1;
 
-const welcome = `Are you a food delivery rider or car driver 🏍️ 🚴 🚗 looking for an easier way to manage your daily tasks? Look no further than PawLee, your free personal assistant. With PawLee, you can get personalised answers to your questions and make your job more efficient 💰.\n
-Let's see how PawLee can help you! 😎\n
-Start by earning now! We will give you a monetary incentive after you answer our onboarding survey 💵💵💵
-👉 The more you share, the better we can help you!`;
+const projectId = "gns-gpt-bot";
+const location = "us"; // Format is 'us' or 'eu'
+const processorId = "e7a923443fcb4ffb"; // form parser id
+
+const scannerClient = new DocumentProcessorServiceClient();
 
 process.env.NTBA_FIX_319 = "test";
+
 module.exports = async (request, response) => {
   if (request.body.callback_query) {
     // console.log("callback_query", request.body.callback_query);
@@ -23,10 +35,6 @@ module.exports = async (request, response) => {
 
   let ctx = request.body.message;
 
-  // if (ctx.chat.type === "private") {
-  //   await bot.sendMessage(ctx.chat.id, welcome);
-  //   return response.send("OK");
-  // }
   ctx.user = await getUser({
     telegramId: ctx.from.id,
   });
@@ -34,15 +42,13 @@ module.exports = async (request, response) => {
   const { message } = request.body;
 
   if (message?.photo) {
+    console.log("------- photo arrived-------");
     const photos = message.photo;
     if (photos.length > 0) {
-      const photoId = photos[photos.length - 1].file_id;
-      const photoUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${photoId}`;
-      console.log(photoUrl);
-      const urlRes = await axios.get(photoUrl);
-      const { file_path } = urlRes.data.result;
-      const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
-      console.log(downloadUrl);
+      const surgeFee = await surgeFeeTableParser(
+        photos[photos.length - 1].file_id
+      );
+      console.log(surgeFee);
     }
   }
   if (message?.document) {
@@ -79,6 +85,7 @@ module.exports = async (request, response) => {
     }
 
     if (ctx.user?.lastCommand === "/start") {
+      console.log("handle the start", ctx.user?.lastCommand);
       await surveyResponse(ctx);
       return response.send("OK");
     }
@@ -87,9 +94,10 @@ module.exports = async (request, response) => {
       return response.send("OK");
     }
 
-    console.log("----- after survey------------------------");
+    // console.log("----- after survey------------------------");
     if (ctx.entities) {
       if (ctx.entities[0]?.type === "bot_command") {
+        console.log("updated the last command", ctx.text);
         updateUser({
           telegramId: ctx.from.id,
           lastCommand: ctx.text,
