@@ -8,16 +8,16 @@ function getDateRange(hours) {
   let startHour = 0;
 
   if (hours === 24) {
-    prependText = "Today";
+    prependText = "today";
   } else if (hours === 48) {
     startDay.setDate(currentDate.getDate() + 1);
-    prependText = "Tomorrow";
+    prependText = "tomorrow";
   } else if (hours === 168) {
     startDay.setDate(currentDate.getDate() - currentDate.getDay() + 1);
-    prependText = "This Week";
+    prependText = "this week";
   } else if (hours === 336) {
     startDay.setDate(currentDate.getDate() + 7 - currentDate.getDay() + 1);
-    prependText = "Next Week";
+    prependText = "next week";
   }
 
   if (hours === 168 || hours === 366) {
@@ -27,7 +27,7 @@ function getDateRange(hours) {
   const startDate = new Date(startDay.getTime() + startHour);
   const endDate = new Date(startDate.getTime() + hours * 60 * 60 * 1000);
 
-  const startDateString = startDate.toLocaleDateString("en-US", {
+  let startDateString = startDate.toLocaleDateString("en-US", {
     weekday: "short",
     day: "numeric",
     month: "short",
@@ -38,6 +38,11 @@ function getDateRange(hours) {
   });
 
   if (hours < 168) return `${prependText} [${startDateString}]`;
+  startDateString = startDate.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "short",
+  });
+
   return `${prependText} [${startDateString} - ${endDateString}]`;
 }
 
@@ -77,7 +82,7 @@ export async function getSurgeData(zone, time) {
     const rows = await sheet.getRows();
     const header = rows[0]._sheet.headerValues;
     let message =
-      "The surge in " + zone + " for next " + duration + " hour(s) : \n\n";
+      "Surge fee in " + zone + " next " + duration + " hour(s) : \n\n";
 
     if (duration === 1 || duration === 2) {
       const hours = getHourIndexes(header, duration);
@@ -98,7 +103,7 @@ export async function getSurgeData(zone, time) {
           return (
             "No surge fee is availble in " +
             zone +
-            " for next " +
+            " next " +
             duration +
             " hour(s) : \n\n"
           );
@@ -115,18 +120,29 @@ export async function getSurgeData(zone, time) {
 
     const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-    message =
-      "The surge in " + zone + " for " + getDateRange(duration) + " : \n\n";
+    message = "Surge fee in " + zone + " " + getDateRange(duration) + " : \n\n";
 
     const today = new Date();
     const dayOfWeek = today.getDay() + duration / 24 - 1;
 
     for (let i = 0; i < rows.length; i += 4) {
       if (rows[i]._rawData[0] === zone) {
-        // weekday price
+        //return everything
         let feeIndex = i;
+        if (duration > 48) {
+          for (feeIndex = i; feeIndex < i + 4; feeIndex++) {
+            message += `📅 ${rows[feeIndex]._rawData[1]}\n`;
+            console.log("Week", feeIndex, rows[feeIndex]._rawData[1]);
+            for (let f = 2; f < rows[feeIndex]._rawData.length; f++) {
+              if (rows[i]._rawData[f]) {
+                message += `👉 ${header[f]}  receive  +${rows[feeIndex]._rawData[f]}  extra per order \n`;
+              }
+            }
+          }
+          return message;
+        }
+        // weekday price
         if (!(dayOfWeek >= 1 && dayOfWeek <= 4)) {
-          console.log("dayOfWeek", dayOfWeek);
           const increment = dayOfWeek === 0 ? 3 : dayOfWeek - 4;
           feeIndex += increment;
         }
