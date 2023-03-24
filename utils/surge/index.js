@@ -69,16 +69,16 @@ function getHourIndexes(hourArray, hours) {
 
 export async function getSurgeData(zone, time) {
   const duration = Number(time);
-  const sheeindex = duration === 336 ? 1 : 0;
+  const sheetIndex = duration === 336 ? 1 : 0;
   try {
     const private_key = process.env.GOOGLE_PRIVATE_KEY;
-    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
+    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_SURGE_DATA_ID);
     await doc.useServiceAccountAuth({
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       private_key: private_key.replace(/\\n/gm, "\n"),
     });
     await doc.getInfo();
-    const sheet = doc.sheetsByIndex[sheeindex];
+    const sheet = doc.sheetsByIndex[sheetIndex];
     const rows = await sheet.getRows();
     const header = rows[0]._sheet.headerValues;
     let message =

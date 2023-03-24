@@ -7,6 +7,7 @@ import { getAnswer } from "./../utils/openai";
 import { replyWithId } from "./../utils/telegram";
 import { updateUser } from "./../utils/firebase";
 import { getSurgeData } from "./../utils/surge";
+import { getQuestData } from "../utils/quest";
 import {
   AnswerResponse,
   MainMenu,
@@ -185,7 +186,7 @@ export const actions = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.from.id,
-        `Chose the incentive duration\n`,
+        `Which week of quest incentive you want to see?\n`,
         QuestIncentive
       );
     },
@@ -206,20 +207,14 @@ export const actions = [
     description: "Handle Quest Incentives",
     func: async (ctx, param) => {
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
+      const message = await getQuestData(
+        ctx.user.zone,
+        ctx.user.vehicle,
+        param
+      );
       //in the below function, check the param and pull the data for that duration
       //quest incentives and show below
-      const announcement = `      
-      \n The cumulative quest for ${param}      
-       Make 45 orders 👉 receive +$21
-       Make 60 orders 👉 receive +$52
-       Make 80 orders 👉 receive +$85
-       Make 95 orders 👉 receive +$113
-       Make 115 orders 👉 receive +$144`;
-      return await bot.sendMessage(
-        telegramId,
-        announcement,
-        LikeDislikeMainMenu
-      );
+      return await bot.sendMessage(telegramId, message, LikeDislikeMainMenu);
     },
   },
   {

@@ -5,7 +5,7 @@ async function quickstart() {
   try {
     //process.env.GOOGLE_PRIVATE_KEY;
     // console.log(private_key);
-    // const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID);
+    // const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_SURGE_DATA_ID);
     const doc = new GoogleSpreadsheet(
       "1ReTleR8iSm34BMecFwlrAF-D49LkQgs9ZYYt0sOCVyQ"
     );

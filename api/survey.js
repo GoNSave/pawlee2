@@ -40,9 +40,12 @@ export const questions = [
   },
   {
     question: " What vehicle you ride? 🚲 🛵 🚗",
+    //DO NOT CHANGE THE FOLLOWING TEXT OTHERWISE QUEST INCENTIVE IN FOLLOWING SPREADSHEET WILL BREAK
+    //https://docs.google.com/spreadsheets/d/1wwOr2Savmn3HQDGjFRdK5kRevH_kZLZb8yxuFiyrehE/edit#gid=0
+
     answers: [
-      [{ text: "🏍️ Motorcycle" }, { text: "🚴 Cycle" }],
-      [{ text: "🚗 Car" }, { text: "🚲 E-bike" }, { text: "🚶 Walk" }],
+      [{ text: "🏍️ Motorbike" }, { text: "🚴 Bicyle" }],
+      [{ text: "🚗 Car" }, { text: "🚲 E-bike" }, { text: "🚶 Walker" }],
     ],
     key: "vehicle",
   },
