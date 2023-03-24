@@ -225,16 +225,7 @@ export const actions = [
       // console.log(ctx, param);
       const announcement = await getSurgeData(ctx.user.zone, param.trim());
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
-      //       const announcement = `
 
-      //       \n The surge fee for ${param}
-      // Mon, 27 Feb:
-      // 👉 3 am - 7 am receive +$1 extra per order
-      // 👉 11 am - 12 pm receive +$2 extra per order
-      // 👉 12 pm - 1 pm receive +$2 extra per order
-      // 👉 5 pm - 6 pm receive +$0.5 extra per order
-      // 👉 6 pm - 7 pm receive +$1 extra per order
-      // 👉 7 pm - 8 pm receive +$1 extra per order`;
       return await bot.sendMessage(
         telegramId,
         announcement,
@@ -245,10 +236,6 @@ export const actions = [
   {
     action: "handleHelp",
     func: async (ctx, param) => {
-      console.log(ctx, param);
-      let readStream = fs.createReadStream(
-        "/Users/ashokjaiswal/Downloads/WhatsApp Image 2023-03-14 at 12.20.20 PM.jpeg"
-      );
       let form = new FormData();
 
       // Send the photo to the user
@@ -278,9 +265,6 @@ export const actions = [
       } catch (e) {
         console.log(e);
       }
-      // const weather =
-      //   "Press 👉 /menu to see all the options that I have for you.";
-      // return reply(ctx, weather);
     },
   },
   {
