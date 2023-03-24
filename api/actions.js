@@ -8,6 +8,8 @@ import { replyWithId } from "./../utils/telegram";
 import { updateUser } from "./../utils/firebase";
 import { getSurgeData } from "./../utils/surge";
 import { getQuestData } from "../utils/quest";
+import { questions } from "./survey";
+
 import {
   AnswerResponse,
   MainMenu,
@@ -144,14 +146,47 @@ export const actions = [
       );
     },
   },
+
   {
     action: "handleProfile",
     description: "Edit profile",
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.from.id,
-        `Chose the detail to edit\n`,
+        `Please chose the profile detail to edit..\n`,
         EditProfile
+      );
+    },
+  },
+  {
+    action: "handleEditProfile",
+    func: async (ctx, param) => {
+      let EditProfileDetails = {
+        reply_markup: {
+          resize_keyboard: false,
+          inline_keyboard: [
+            [
+              {
+                text: "📋 Back to Main Menu ⬅️",
+                callback_data: "handleMainMenu:Company",
+              },
+            ],
+          ],
+        },
+      };
+      const answerButtons = questions[param].answers.map((answerGroup) =>
+        answerGroup.map((answer) => ({
+          text: answer.text,
+          callback_data: `handleEditProfile:${questions[param].key}:${answer.text}`,
+        }))
+      );
+
+      EditProfileDetails.reply_markup.inline_keyboard.unshift(...answerButtons);
+
+      return await bot.sendMessage(
+        ctx.from.id,
+        `Please chose from following options to continue ...\n`,
+        EditProfileDetails
       );
     },
   },

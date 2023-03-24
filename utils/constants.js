@@ -106,22 +106,16 @@ export const EditProfile = {
     inline_keyboard: [
       [
         {
-          text: "🗣 Zone",
-          callback_data: "handleEditProfile:Zone",
+          text: "💸 Company",
+          callback_data: "handleEditProfile:2",
         },
         {
           text: "💸 Vehicle",
-          callback_data: "handleEditProfile:Vehicle",
-        },
-      ],
-      [
-        {
-          text: "💸 Company",
-          callback_data: "handleEditProfile:Company",
+          callback_data: "handleEditProfile:3",
         },
         {
-          text: "📣 City",
-          callback_data: "handleEditProfile:City",
+          text: "🗣 Zone",
+          callback_data: "handleEditProfile:4",
         },
       ],
       [
