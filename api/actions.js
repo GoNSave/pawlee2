@@ -159,8 +159,28 @@ export const actions = [
     },
   },
   {
+    action: "handleUpdateProfile",
+    description: "Update the  profile",
+    func: async (ctx, param) => {
+      const keyValue = param.split("\n");
+      console.log(`handleUpdateProfile ${keyValue}`);
+      await updateUser({
+        telegramId: ctx.from.id,
+        [keyValue[0]]: keyValue[1],
+      });
+
+      return await bot.sendMessage(
+        ctx.from.id,
+        `${keyValue[0]} is now updated to ${keyValue[1]}`,
+        MainMenu
+      );
+    },
+  },
+
+  {
     action: "handleEditProfile",
     func: async (ctx, param) => {
+      console.log(`Noq handleEditProfile ${param}`);
       let EditProfileDetails = {
         reply_markup: {
           resize_keyboard: false,
@@ -177,7 +197,7 @@ export const actions = [
       const answerButtons = questions[param].answers.map((answerGroup) =>
         answerGroup.map((answer) => ({
           text: answer.text,
-          callback_data: `handleEditProfile:${questions[param].key}:${answer.text}`,
+          callback_data: `handleUpdateProfile:${questions[param].key}\n${answer.text}`,
         }))
       );
 
@@ -208,13 +228,13 @@ export const actions = [
       );
     },
   },
-  {
-    action: "handleEditProfile",
-    description: "Edit Profile ",
-    func: async (ctx, param) => {
-      return await bot.sendMessage(ctx.from.id, `Edit ${param}\n`);
-    },
-  },
+  // {
+  //   action: "handleEditProfile",
+  //   description: "Edit Profile ",
+  //   func: async (ctx, param) => {
+  //     return await bot.sendMessage(ctx.from.id, `Edit ${param}\n`);
+  //   },
+  // },
   {
     action: "handleIncentives",
     description: "Handle Incentives",
