@@ -11,24 +11,18 @@ import { surveyResponse } from "./survey";
 import { handleQuestion } from "../utils/openai";
 import { defaultResponse } from "../utils/constants";
 import { getPhotoUrl, getPhotoData } from "../utils/noaxios";
-import { surgeFeeTableParser } from "../utils/docuai";
+import { parseReceipt } from "../utils/parser";
 import { reply, bot } from "../utils/telegram";
+
 const vision = require("@google-cloud/vision");
 const pdfParse = require("pdf-parse");
 const { DocumentProcessorServiceClient } =
   require("@google-cloud/documentai").v1;
 
-const projectId = "gns-gpt-bot";
-const location = "us"; // Format is 'us' or 'eu'
-const processorId = "e7a923443fcb4ffb"; // form parser id
-
-const scannerClient = new DocumentProcessorServiceClient();
-
 process.env.NTBA_FIX_319 = "test";
 
 module.exports = async (request, response) => {
   let ctx = request.body.callback_query;
-
   if (request.body.callback_query) {
     ctx.user = await getUser({
       telegramId: ctx.from.id,
@@ -51,10 +45,8 @@ module.exports = async (request, response) => {
     console.log("------- photo arrived-------");
     const photos = message.photo;
     if (photos.length > 0) {
-      const surgeFee = await surgeFeeTableParser(
-        photos[photos.length - 1].file_id
-      );
-      console.log(surgeFee);
+      const receiptData = await parseReceipt(photos[photos.length - 1].file_id);
+      await bot.sendMessage(ctx.from.id, receiptData);
     }
   }
   if (message?.document) {
