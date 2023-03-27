@@ -13,6 +13,7 @@ import { defaultResponse } from "../utils/constants";
 import { getPhotoUrl, getPhotoData } from "../utils/noaxios";
 import { parseReceipt } from "../utils/parser";
 import { reply, bot } from "../utils/telegram";
+import { TelegramBot } from "../utils/bot";
 
 const vision = require("@google-cloud/vision");
 const pdfParse = require("pdf-parse");
@@ -23,6 +24,12 @@ process.env.NTBA_FIX_319 = "test";
 
 module.exports = async (request, response) => {
   let ctx = request.body.callback_query;
+
+  const bot = new TelegramBot(process.env.TELEGRAM_TOKEN_GNSGPTBOT);
+  return await bot.init(request, response);
+
+  return response.send(ret);
+
   if (request.body.callback_query) {
     ctx.user = await getUser({
       telegramId: ctx.from.id,
